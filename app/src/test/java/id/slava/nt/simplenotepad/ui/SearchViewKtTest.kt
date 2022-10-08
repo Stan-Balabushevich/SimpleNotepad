@@ -1,8 +1,6 @@
 package id.slava.nt.simplenotepad.ui
 
 import android.content.Context
-import androidx.compose.ui.res.stringResource
-import org.junit.Test
 import com.google.common.truth.Truth.assertThat
 import org.junit.runner.RunWith
 
