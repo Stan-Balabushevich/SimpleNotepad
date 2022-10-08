@@ -2,7 +2,10 @@ package id.slava.nt.simplenotepad.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val GreenGrey30 = Color(0xFF44554b)
+val GreenGrey50 = Color(0xFF718e7d)
+val GreenGrey60 = Color(0xFF8ea497)
+val GreenGrey80 = Color(0xFFc6d2cb)
+val GreenGrey90 = Color(0xFFe3e8e5)
+
+val GreenGrey100 = Color(0xFF36A562)

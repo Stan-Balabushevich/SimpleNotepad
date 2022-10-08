@@ -5,17 +5,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = GreenGrey80,
+    primaryVariant = GreenGrey30,
+    secondary = GreenGrey100,
+    background = GreenGrey30
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = GreenGrey50,
+    primaryVariant = GreenGrey30,
+    secondary = GreenGrey100,
+    background = GreenGrey90
 
     /* Other default colors to override
     background = Color.White,
@@ -34,6 +38,24 @@ fun SimpleNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Com
     } else {
         LightColorPalette
     }
+
+
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        // to change system bar color
+        systemUiController.setStatusBarColor(
+            color = GreenGrey30,
+            darkIcons = false
+        )
+        // to change navigation bar color
+        systemUiController.setNavigationBarColor(
+            color = GreenGrey30,
+            darkIcons = false
+        )
+    }
+
+
+
 
     MaterialTheme(
         colors = colors,
