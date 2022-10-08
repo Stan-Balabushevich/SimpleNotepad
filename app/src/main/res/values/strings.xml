@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">Simple Notepad</string>
+    <string name="app_name">SimpleNotepad</string>
     <string name="search">Search</string>
     <string name="back_arrow">Back arrow</string>
     <string name="notes">Notes</string>
+    <string name="ftb_desc">Add new note</string>
+    <string name="search_title">Search by Title</string>
+    <string name="search_content">Search by Content</string>
 </resources>

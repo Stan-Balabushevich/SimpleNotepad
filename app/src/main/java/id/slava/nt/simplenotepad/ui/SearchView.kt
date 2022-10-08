@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -15,9 +17,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,13 +45,21 @@ fun ExpandableSearchView(
     searchDisplay: String,
     onSearchDisplayChanged: (String) -> Unit,
     onSearchDisplayClosed: () -> Unit,
+    onSearchTitle: (String) -> Unit,
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
+    menuOpenInitially: Boolean = false,
     tint: Color = MaterialTheme.colors.onPrimary
 ) {
     val (expanded, onExpandedChanged) = remember {
         mutableStateOf(expandedInitially)
     }
+
+    val searchMenuOptions = remember {
+        mutableStateOf(menuOpenInitially)
+    }
+
+    var searchTitle by remember { mutableStateOf("") }
 
 
     Crossfade(targetState = expanded) { isSearchFieldVisible ->
@@ -60,13 +70,19 @@ fun ExpandableSearchView(
                 onSearchDisplayClosed = onSearchDisplayClosed,
                 onExpandedChanged = onExpandedChanged,
                 modifier = modifier,
-                tint = tint
+                tint = tint,
+                searchTitle = searchTitle
             )
 
             false -> CollapsedSearchView(
                 onExpandedChanged = onExpandedChanged,
+                searchMenuOptions = searchMenuOptions,
                 modifier = modifier,
-                tint = tint
+                tint = tint,
+                onDropdownMenuItemSelected = {
+                    searchTitle = it
+                    onSearchTitle(it)
+                }
             )
         }
     }
@@ -84,37 +100,69 @@ fun SearchIcon(iconTint: Color) {
 @Composable
 fun CollapsedSearchView(
     onExpandedChanged: (Boolean) -> Unit,
+    searchMenuOptions: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
+    onDropdownMenuItemSelected: (String) -> Unit
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 2.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = stringResource(id = R.string.notes),
             style = MaterialTheme.typography.h6,
             modifier = Modifier
-                .padding(start = 16.dp)
+                .padding(start = 16.dp),
+
         )
-        IconButton(onClick = { onExpandedChanged(true) }) {
+        IconButton(onClick = {
+            searchMenuOptions.value= true
+
+        }) {
             SearchIcon(iconTint = tint)
         }
-        IconButton(onClick = { },modifier = Modifier.weight(2f)) {
-            Icon(Icons.Filled.Menu,
-                contentDescription = "",
-                modifier = Modifier.weight(2f))
+
+        when( searchMenuOptions.value){
+
+            true -> SearchOptions(onExpandedChanged = onExpandedChanged,
+                mExpandedMenu = searchMenuOptions,
+                onDropdownMenuItemSelected = onDropdownMenuItemSelected)
+            else -> {}
         }
     }
 }
 
 @Composable
+fun SearchOptions(onExpandedChanged: (Boolean) -> Unit,
+                  mExpandedMenu: MutableState<Boolean>,
+                  onDropdownMenuItemSelected: (String) -> Unit){
+
+    val dropDownOptions = listOf(stringResource(id = R.string.search_title),
+        stringResource(id = R.string.search_content))
+    
+    DropdownMenu(expanded = mExpandedMenu.value,
+        onDismissRequest = { mExpandedMenu.value = false })
+         {
+             dropDownOptions.forEach { label ->
+                 DropdownMenuItem(onClick = {
+                     onDropdownMenuItemSelected(label)
+                     mExpandedMenu.value = false
+                     onExpandedChanged(true)
+                 }) {
+                     Text(text = label)
+                 }
+            }
+        }
+}
+
+@Composable
 fun ExpandedSearchView(
     searchDisplay: String,
+    searchTitle: String,
     onSearchDisplayChanged: (String) -> Unit,
     onSearchDisplayClosed: () -> Unit,
     onExpandedChanged: (Boolean) -> Unit,
@@ -154,14 +202,11 @@ fun ExpandedSearchView(
                 textFieldValue = it
                 onSearchDisplayChanged(it.text)
             },
-            trailingIcon = {
-                SearchIcon(iconTint = tint)
-            },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(textFieldFocusRequester),
             label = {
-                Text(text = stringResource(id = R.string.search), color = tint)
+                Text(text = searchTitle, color = tint)
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
@@ -185,7 +230,8 @@ fun CollapsedSearchViewPreview() {
             ExpandableSearchView(
                 searchDisplay = "",
                 onSearchDisplayChanged = {},
-                onSearchDisplayClosed = {}
+                onSearchDisplayClosed = {},
+                onSearchTitle = {}
             )
         }
     }
@@ -202,7 +248,8 @@ fun ExpandedSearchViewPreview() {
                 searchDisplay = "",
                 onSearchDisplayChanged = {},
                 expandedInitially = true,
-                onSearchDisplayClosed = {}
+                onSearchDisplayClosed = {},
+                onSearchTitle = {}
             )
         }
     }
