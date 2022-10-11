@@ -3,6 +3,7 @@ package id.slava.nt.simplenotepad
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -14,13 +15,19 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.slava.nt.simplenotepad.ui.ExpandableSearchView
+import id.slava.nt.simplenotepad.ui.NotesList
+import id.slava.nt.simplenotepad.ui.notesTest
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
 
@@ -34,6 +41,15 @@ class MainActivity : ComponentActivity() {
 
                 val viewModel = viewModel<MainViewModel>()
                 val context = LocalContext.current
+
+                val text = viewModel.searchText.collectAsState()
+
+                lifecycleScope.launchWhenStarted {
+                    viewModel.searchBy.collectLatest(){
+                        Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
+
+                    }
+                }
 
                 ListScreen(viewModel,context)
 
@@ -67,6 +83,10 @@ private fun ListScreen(viewModel: MainViewModel, context: Context){
 
             }
         },
+        content = { NotesList(notes = notesTest, onNoteItemSelected = {
+            // send it to edit note screen through nav component as argument
+            Toast.makeText(context,it.title,Toast.LENGTH_SHORT).show()
+        }) },
 
         floatingActionButton = {
             FloatingActionButton(
@@ -76,9 +96,6 @@ private fun ListScreen(viewModel: MainViewModel, context: Context){
                     contentDescription = stringResource(id = R.string.ftb_desc))
             }
         }
-    ) {
-       
-    }
-
+    )
 }
 

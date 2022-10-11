@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -119,20 +120,30 @@ fun CollapsedSearchView(
                 .padding(start = 16.dp),
 
         )
-        IconButton(onClick = {
-            searchMenuOptions.value= true
 
-        }) {
-            SearchIcon(iconTint = tint)
+        Row(
+//            horizontalArrangement = Arrangement.End
+            verticalAlignment = Alignment.CenterVertically
+
+        ){
+
+            IconButton(onClick = {
+                searchMenuOptions.value= true
+
+            }) {
+                SearchIcon(iconTint = tint)
+            }
+
+            when( searchMenuOptions.value){
+
+                true -> SearchOptions(onExpandedChanged = onExpandedChanged,
+                    mExpandedMenu = searchMenuOptions,
+                    onDropdownMenuItemSelected = onDropdownMenuItemSelected)
+                else -> {}
+            }
+
         }
 
-        when( searchMenuOptions.value){
-
-            true -> SearchOptions(onExpandedChanged = onExpandedChanged,
-                mExpandedMenu = searchMenuOptions,
-                onDropdownMenuItemSelected = onDropdownMenuItemSelected)
-            else -> {}
-        }
     }
 }
 
@@ -141,7 +152,8 @@ fun SearchOptions(onExpandedChanged: (Boolean) -> Unit,
                   mExpandedMenu: MutableState<Boolean>,
                   onDropdownMenuItemSelected: (String) -> Unit){
 
-    val dropDownOptions = listOf(stringResource(id = R.string.search_title),
+    val dropDownOptions = listOf(
+        stringResource(id = R.string.search_title),
         stringResource(id = R.string.search_content))
     
     DropdownMenu(expanded = mExpandedMenu.value,

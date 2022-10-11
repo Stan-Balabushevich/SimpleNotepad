@@ -6,4 +6,6 @@
     <string name="ftb_desc">Add new note</string>
     <string name="search_title">Search by Title</string>
     <string name="search_content">Search by Content</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
 </resources>

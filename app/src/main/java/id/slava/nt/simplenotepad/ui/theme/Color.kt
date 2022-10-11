@@ -8,4 +8,5 @@ val GreenGrey60 = Color(0xFF8ea497)
 val GreenGrey80 = Color(0xFFc6d2cb)
 val GreenGrey90 = Color(0xFFe3e8e5)
 
-val GreenGrey100 = Color(0xFF36A562)
+val Green100 = Color(0xFF2FDB74)
+val LightGreen100 =  Color(0xFFB3CC98)
