@@ -96,7 +96,9 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                         fontWeight = FontWeight.ExtraBold
                     ),
                     textAlign = TextAlign.End,
-                    maxLines = 2
+                    maxLines = 2,
+                    modifier = Modifier
+                        .clickable { expanded = !expanded }
                 )
             }
 

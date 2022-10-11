@@ -26,7 +26,6 @@ import id.slava.nt.simplenotepad.ui.ExpandableSearchView
 import id.slava.nt.simplenotepad.ui.NotesList
 import id.slava.nt.simplenotepad.ui.notesTest
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
                 lifecycleScope.launchWhenStarted {
                     viewModel.searchBy.collectLatest(){
-                        Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
 
                     }
                 }
@@ -72,14 +71,23 @@ private fun ListScreen(viewModel: MainViewModel, context: Context){
                     onSearchDisplayChanged = {
                         viewModel.setSearchText(it)},
                     onSearchDisplayClosed = { },
-                    onSearchTitle = {
+                    onSearchBy = {
                         when(it){
                             context.getString(R.string.search_title)
                             -> viewModel.setSearchBy(TITLE)
                             context.getString(R.string.search_content)
                             -> viewModel.setSearchBy(CONTENT)
                         }
-                    })
+                    },
+                    onSortBy ={
+                        when(it){
+                            context.getString(R.string.sort_time_added)
+                            -> Toast.makeText(context, it,Toast.LENGTH_SHORT).show()
+                            context.getString(R.string.sort_time_edited)
+                            -> Toast.makeText(context, it,Toast.LENGTH_SHORT).show()
+                        }
+
+                    } )
 
             }
         },
