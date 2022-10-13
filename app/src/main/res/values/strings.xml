@@ -9,6 +9,8 @@
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="sort">Sort notes</string>
-    <string name="sort_time_added">Sort by time note added</string>
-    <string name="sort_time_edited">Sort by time note edited</string>
+    <string name="sort_created">Sort by created</string>
+    <string name="sort_edited">Sort by edited</string>
+    <string name="created">Created: %1$s</string>
+    <string name="edited">Edited: %1$s</string>
 </resources>

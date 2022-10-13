@@ -209,8 +209,8 @@ fun SortOptionsMenu(mExpandedMenu: MutableState<Boolean>,
                       onDropdownMenuItemSelected: (String) -> Unit) {
 
     val dropDownOptions = listOf(
-        stringResource(id = R.string.sort_time_added),
-        stringResource(id = R.string.sort_time_edited)
+        stringResource(id = R.string.sort_created),
+        stringResource(id = R.string.sort_edited)
     )
 
     DropdownMenu(expanded = mExpandedMenu.value,

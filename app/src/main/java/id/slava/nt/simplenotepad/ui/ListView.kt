@@ -26,10 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.models.Note
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
@@ -85,32 +87,55 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
             Row() {
                 Icon(
                     imageVector =  Icons.Filled.EditNote,
-                    contentDescription = "edit",
+                    contentDescription = "Edit note",
                     modifier = Modifier
                         .padding(8.dp)
                         .clickable { onNoteItemSelected(note) }
                 )
-                Text(
-                    text = note.title,
-                    style = MaterialTheme.typography.h6.copy(
-                        fontWeight = FontWeight.ExtraBold
-                    ),
-                    textAlign = TextAlign.End,
-                    maxLines = 2,
-                    modifier = Modifier
-                        .clickable { expanded = !expanded }
-                )
+                Column {
+                    Text(text = stringResource(
+                         R.string.created,
+                        note.timestamp.toString().repeat(6)
+                    ) ,
+
+                        style = TextStyle(fontSize = 12.sp)
+                    )
+                    Text(
+                        text = note.title,
+                        style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.ExtraBold
+                        ),
+                        textAlign = TextAlign.End,
+                        maxLines = 2,
+                        modifier = Modifier
+                            .clickable { expanded = !expanded }
+                    )
+                }
+
             }
 
             if (expanded) {
-                    Text(
+                Column() {
 
-                        text = note.content,
+                    Text(
+                        text = stringResource(
+                            R.string.edited,
+                            note.timestamp.toString().repeat(6)
+                        ),
+                        style = TextStyle(fontSize = 12.sp)
+                    )
+
+                    Text(
+                        text = note.content ,
                         maxLines = 3,
+                        style = TextStyle(fontSize = 16.sp),
                         modifier = Modifier
                             .clickable { onNoteItemSelected(note) }
 
                     )
+
+                }
+
 
             }
         }
