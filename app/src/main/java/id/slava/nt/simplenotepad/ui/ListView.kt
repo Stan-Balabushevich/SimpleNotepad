@@ -37,9 +37,11 @@ import id.slava.nt.simplenotepad.models.Note
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 
-val notesTest = List(10) { Note( id = it, title = "Title Composem ipsum color sit lazy, $it",
+val notesTest = List(10) { Note( id = it,
+    title = "Title Composem ipsum color sit lazy, $it",
     content = ("Composem ipsum color sit lazy, " +
-            "padding theme elit, sed do bouncy. ").repeat(4), timestamp = it.toLong() ) }
+            "padding theme elit, sed do bouncy. ")
+        .repeat(4), dateCreated = it.toLong(), dateEdited = it.toLong() ) }
 
 
 @Composable
@@ -95,7 +97,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                 Column {
                     Text(text = stringResource(
                          R.string.created,
-                        note.timestamp.toString().repeat(6)
+                        note.dateCreated.toString().repeat(6)
                     ) ,
 
                         style = TextStyle(fontSize = 12.sp)
@@ -120,7 +122,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                     Text(
                         text = stringResource(
                             R.string.edited,
-                            note.timestamp.toString().repeat(6)
+                            note.dateEdited.toString().repeat(6)
                         ),
                         style = TextStyle(fontSize = 12.sp)
                     )
