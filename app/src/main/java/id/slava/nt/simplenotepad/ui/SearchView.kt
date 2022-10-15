@@ -18,6 +18,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -45,7 +46,8 @@ fun ExpandableSearchView(
     searchDisplay: String,
     onSearchDisplayChanged: (String) -> Unit,
     onSearchDisplayClosed: () -> Unit,
-    onSearchTitle: (String) -> Unit,
+    onSearchBy: (String) -> Unit,
+    onSortBy: (String) -> Unit,
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
     menuOpenInitially: Boolean = false,
@@ -56,6 +58,10 @@ fun ExpandableSearchView(
     }
 
     val searchMenuOptions = remember {
+        mutableStateOf(menuOpenInitially)
+    }
+
+    val sortMenuOptions = remember {
         mutableStateOf(menuOpenInitially)
     }
 
@@ -79,9 +85,13 @@ fun ExpandableSearchView(
                 searchMenuOptions = searchMenuOptions,
                 modifier = modifier,
                 tint = tint,
-                onDropdownMenuItemSelected = {
+                onSearchMenuItemSelected = {
                     searchTitle = it
-                    onSearchTitle(it)
+                    onSearchBy(it)
+                },
+                sortMenuOptions = sortMenuOptions,
+                onSortMenuItemSelected = {
+                    onSortBy(it)
                 }
             )
         }
@@ -98,12 +108,23 @@ fun SearchIcon(iconTint: Color) {
 }
 
 @Composable
+fun SortIcon(iconTint: Color) {
+    Icon(
+        imageVector =  Icons.Filled.Sort,
+        contentDescription = stringResource(id = R.string.sort),
+        tint = iconTint
+    )
+}
+
+@Composable
 fun CollapsedSearchView(
     onExpandedChanged: (Boolean) -> Unit,
     searchMenuOptions: MutableState<Boolean>,
+    sortMenuOptions: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
-    onDropdownMenuItemSelected: (String) -> Unit
+    onSearchMenuItemSelected: (String) -> Unit,
+    onSortMenuItemSelected: (String) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -119,29 +140,53 @@ fun CollapsedSearchView(
                 .padding(start = 16.dp),
 
         )
-        IconButton(onClick = {
-            searchMenuOptions.value= true
 
-        }) {
-            SearchIcon(iconTint = tint)
+        Row(
+//            horizontalArrangement = Arrangement.End
+            verticalAlignment = Alignment.CenterVertically
+
+        ){
+
+            IconButton(onClick = {
+                searchMenuOptions.value= true
+
+            }) {
+                SearchIcon(iconTint = tint)
+            }
+
+            when( searchMenuOptions.value){
+
+                true -> SearchOptionsMenu(onExpandedChanged = onExpandedChanged,
+                    mExpandedMenu = searchMenuOptions,
+                    onDropdownMenuItemSelected = onSearchMenuItemSelected)
+                else -> {}
+            }
+            IconButton(onClick = {
+                sortMenuOptions.value= true
+
+            }) {
+                SortIcon(iconTint = tint)
+            }
+            when( sortMenuOptions.value){
+
+                true -> SortOptionsMenu(
+                    mExpandedMenu = sortMenuOptions,
+                    onDropdownMenuItemSelected = onSortMenuItemSelected)
+                else -> {}
+            }
+
         }
 
-        when( searchMenuOptions.value){
-
-            true -> SearchOptions(onExpandedChanged = onExpandedChanged,
-                mExpandedMenu = searchMenuOptions,
-                onDropdownMenuItemSelected = onDropdownMenuItemSelected)
-            else -> {}
-        }
     }
 }
 
 @Composable
-fun SearchOptions(onExpandedChanged: (Boolean) -> Unit,
-                  mExpandedMenu: MutableState<Boolean>,
-                  onDropdownMenuItemSelected: (String) -> Unit){
+fun SearchOptionsMenu(onExpandedChanged: (Boolean) -> Unit,
+                      mExpandedMenu: MutableState<Boolean>,
+                      onDropdownMenuItemSelected: (String) -> Unit){
 
-    val dropDownOptions = listOf(stringResource(id = R.string.search_title),
+    val dropDownOptions = listOf(
+        stringResource(id = R.string.search_title),
         stringResource(id = R.string.search_content))
     
     DropdownMenu(expanded = mExpandedMenu.value,
@@ -158,6 +203,30 @@ fun SearchOptions(onExpandedChanged: (Boolean) -> Unit,
             }
         }
 }
+
+@Composable
+fun SortOptionsMenu(mExpandedMenu: MutableState<Boolean>,
+                      onDropdownMenuItemSelected: (String) -> Unit) {
+
+    val dropDownOptions = listOf(
+        stringResource(id = R.string.sort_created),
+        stringResource(id = R.string.sort_edited)
+    )
+
+    DropdownMenu(expanded = mExpandedMenu.value,
+        onDismissRequest = { mExpandedMenu.value = false })
+    {
+        dropDownOptions.forEach { label ->
+            DropdownMenuItem(onClick = {
+                onDropdownMenuItemSelected(label)
+                mExpandedMenu.value = false
+            }) {
+                Text(text = label)
+            }
+        }
+    }
+}
+
 
 @Composable
 fun ExpandedSearchView(
@@ -231,7 +300,8 @@ fun CollapsedSearchViewPreview() {
                 searchDisplay = "",
                 onSearchDisplayChanged = {},
                 onSearchDisplayClosed = {},
-                onSearchTitle = {}
+                onSearchBy = {},
+                onSortBy = {}
             )
         }
     }
@@ -249,7 +319,8 @@ fun ExpandedSearchViewPreview() {
                 onSearchDisplayChanged = {},
                 expandedInitially = true,
                 onSearchDisplayClosed = {},
-                onSearchTitle = {}
+                onSearchBy = {},
+                onSortBy = {}
             )
         }
     }

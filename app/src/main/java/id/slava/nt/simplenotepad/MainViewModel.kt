@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 const val TITLE = "Title"
 const val CONTENT = "Content"
+const val TIME_ADDED = "Added"
+const val TIME_EDITED = "Edited"
 
 class MainViewModel: ViewModel() {
 
