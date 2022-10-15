@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import id.slava.nt.simplenotepad.ui.ExpandableSearchView
-import id.slava.nt.simplenotepad.ui.NotesList
-import id.slava.nt.simplenotepad.ui.notesTest
+import id.slava.nt.simplenotepad.presentation.ExpandableSearchView
+import id.slava.nt.simplenotepad.presentation.NotesList
+import id.slava.nt.simplenotepad.presentation.notesTest
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 val viewModel = viewModel<MainViewModel>()
                 val context = LocalContext.current
 
-                val text = viewModel.searchText.collectAsState()
+//                val text = viewModel.searchText.collectAsState()
 
                 lifecycleScope.launchWhenStarted {
                     viewModel.searchBy.collect{
@@ -84,6 +84,8 @@ private fun ListScreen(viewModel: MainViewModel, context: Context){
                             -> Toast.makeText(context, it,Toast.LENGTH_SHORT).show()
                             context.getString(R.string.sort_edited)
                             -> Toast.makeText(context, it,Toast.LENGTH_SHORT).show()
+                            context.getString(R.string.sort_edited) ->
+                                Toast.makeText(context, it,Toast.LENGTH_SHORT).show()
                         }
 
                     } )

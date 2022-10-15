@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.ui
+package id.slava.nt.simplenotepad.presentation
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.slava.nt.simplenotepad.R
-import id.slava.nt.simplenotepad.models.Note
+import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 
@@ -167,6 +167,6 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
 @Composable
 fun DefaultPreview() {
     SimpleNotepadTheme {
-        NotesList(notes =notesTest, onNoteItemSelected = {})
+        NotesList(notes = notesTest, onNoteItemSelected = {})
     }
 }
