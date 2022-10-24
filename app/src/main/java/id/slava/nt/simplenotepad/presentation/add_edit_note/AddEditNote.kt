@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.presentation
+package id.slava.nt.simplenotepad.presentation.add_edit_note
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
@@ -27,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slava.nt.simplenotepad.R
-import id.slava.nt.simplenotepad.presentation.components.TransparentHintTextField
+import id.slava.nt.simplenotepad.presentation.add_edit_note.components.TransparentHintTextField
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 @Composable
@@ -35,6 +36,7 @@ fun ToolbarView(
     navController: NavController,
     shareNote: (Boolean) -> Unit,
     saveNote: (Boolean) -> Unit,
+    deleteNote: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
 ) {
@@ -76,7 +78,17 @@ fun ToolbarView(
             }) {
                 Icon(
                     imageVector =  Icons.Filled.Save,
-                    contentDescription = stringResource(id = R.string.back_arrow),
+                    contentDescription = stringResource(id = R.string.save_note),
+                    tint = tint
+                )
+            }
+            IconButton(onClick = {
+                deleteNote(true)
+
+            }) {
+                Icon(
+                    imageVector =  Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_note),
                     tint = tint
                 )
             }
@@ -88,7 +100,7 @@ fun ToolbarView(
 
 
 @Composable
-fun NoteContentView(){
+fun NoteContentView(title: NoteTextFieldState, content: NoteTextFieldState){
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -96,29 +108,29 @@ fun NoteContentView(){
 
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
-            text = "",
-            hint = "titleState.hint",
+            text = title.text,
+            hint = title.hint,
             onValueChange = {
 
             },
             onFocusChange = {
 
             },
-            isHintVisible = true,
+            isHintVisible = title.isHintVisible,
             singleLine = true,
             textStyle = MaterialTheme.typography.h5
         )
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
-            text = "",
-            hint = "contentState.hint",
+            text = content.text,
+            hint = content.hint,
             onValueChange = {
 
             },
             onFocusChange = {
 
             },
-            isHintVisible = true,
+            isHintVisible = content.isHintVisible,
             textStyle = MaterialTheme.typography.body1,
             modifier = Modifier.fillMaxHeight()
         )
@@ -141,7 +153,8 @@ fun ToolbarViewPreview() {
             ToolbarView(
                 navController = NavController(LocalContext.current),
                 shareNote = {},
-                saveNote = {}
+                saveNote = {},
+                deleteNote = {}
             )
         }
     }
@@ -154,7 +167,11 @@ fun NoteContentViewPreview() {
         Surface(
             color = MaterialTheme.colors.background
         ) {
-            NoteContentView()
+            NoteContentView(
+                title = NoteTextFieldState("title"),
+                content = NoteTextFieldState("content"),
+
+            )
         }
     }
 }

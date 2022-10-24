@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.presentation
+package id.slava.nt.simplenotepad.presentation.list_notes
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement

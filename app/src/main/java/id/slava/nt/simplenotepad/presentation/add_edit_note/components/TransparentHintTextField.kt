@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.presentation.components
+package id.slava.nt.simplenotepad.presentation.add_edit_note.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
