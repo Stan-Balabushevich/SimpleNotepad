@@ -3,6 +3,8 @@ package id.slava.nt.simplenotepad
 
 import org.junit.Test
 import com.google.common.truth.Truth.assertThat
+import id.slava.nt.simplenotepad.presentation.list_notes.CONTENT
+import id.slava.nt.simplenotepad.presentation.list_notes.TITLE
 
 private const val TITLE_TEST = "Title"
 private const val CONTENT_TEST = "Content"

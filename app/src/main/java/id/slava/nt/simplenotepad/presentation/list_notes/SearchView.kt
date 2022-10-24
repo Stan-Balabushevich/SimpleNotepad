@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.ui
+package id.slava.nt.simplenotepad.presentation.list_notes
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
@@ -210,7 +210,8 @@ fun SortOptionsMenu(mExpandedMenu: MutableState<Boolean>,
 
     val dropDownOptions = listOf(
         stringResource(id = R.string.sort_created),
-        stringResource(id = R.string.sort_edited)
+        stringResource(id = R.string.sort_edited),
+        stringResource(id = R.string.sort_title)
     )
 
     DropdownMenu(expanded = mExpandedMenu.value,

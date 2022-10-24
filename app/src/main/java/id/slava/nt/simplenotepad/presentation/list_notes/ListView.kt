@@ -1,4 +1,4 @@
-package id.slava.nt.simplenotepad.ui
+package id.slava.nt.simplenotepad.presentation.list_notes
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
@@ -33,16 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.slava.nt.simplenotepad.R
-import id.slava.nt.simplenotepad.models.Note
+import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
-
-
-val notesTest = List(10) { Note( id = it,
-    title = "Title Composem ipsum color sit lazy, $it",
-    content = ("Composem ipsum color sit lazy, " +
-            "padding theme elit, sed do bouncy. ")
-        .repeat(4), dateCreated = it.toLong(), dateEdited = it.toLong() ) }
-
 
 @Composable
 fun NotesList(notes: List<Note>,
@@ -133,12 +125,8 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                         style = TextStyle(fontSize = 16.sp),
                         modifier = Modifier
                             .clickable { onNoteItemSelected(note) }
-
                     )
-
                 }
-
-
             }
         }
         IconButton(onClick = { expanded = !expanded }) {
@@ -153,7 +141,6 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
 
             )
         }
-
     }
 }
 
@@ -167,6 +154,12 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
 @Composable
 fun DefaultPreview() {
     SimpleNotepadTheme {
-        NotesList(notes =notesTest, onNoteItemSelected = {})
+        NotesList(notes = notesTest, onNoteItemSelected = {})
     }
 }
+
+val notesTest = List(10) { Note( id = it,
+    title = "Title Composem ipsum color sit lazy, $it",
+    content = ("Composem ipsum color sit lazy, " +
+            "padding theme elit, sed do bouncy. ")
+        .repeat(4), dateCreated = it.toLong(), dateEdited = it.toLong() ) }
