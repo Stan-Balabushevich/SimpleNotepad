@@ -5,7 +5,7 @@ import id.slava.nt.simplenotepad.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeNoteRepositoryTest: NoteRepository {
+class FakeNoteRepository: NoteRepository {
 
     private val notes = mutableListOf<Note>()
 
@@ -22,7 +22,15 @@ class FakeNoteRepositoryTest: NoteRepository {
     }
 
     override fun getSearchTitle(searchText: String): Flow<List<Note>> {
-        TODO("Not yet implemented")
+        val titleNotes = mutableListOf<Note>()
+
+        notes.forEach{ note ->
+            if(note.title.contains(searchText)){
+                titleNotes.add(note)
+            }
+        }
+
+        return flow { emit(titleNotes) }
     }
 
     override fun getSearchContent(searchText: String): Flow<List<Note>> {
