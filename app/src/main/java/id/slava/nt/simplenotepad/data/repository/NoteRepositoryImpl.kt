@@ -25,11 +25,11 @@ class NoteRepositoryImpl(
         dao.deleteNote(note)
     }
 
-    override suspend fun getSearchTitleFlow(searchText: String): Flow<List<Note>> =
+    override fun getSearchTitle(searchText: String): Flow<List<Note>> =
         dao.getSearchTitleFlow(searchText)
 
 
-    override suspend fun getSearchContentFlow(searchText: String): Flow<List<Note>> =
+    override fun getSearchContent(searchText: String): Flow<List<Note>> =
         dao.getSearchContentFlow(searchText)
 
     override fun deleteAll() {

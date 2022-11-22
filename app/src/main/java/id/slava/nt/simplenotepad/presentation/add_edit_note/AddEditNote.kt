@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.presentation.add_edit_note.components.TransparentHintTextField
+import id.slava.nt.simplenotepad.presentation.util.NoteAlertDialog
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ToolbarView(
@@ -39,7 +43,32 @@ fun ToolbarView(
     deleteNote: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
+    viewModel: AddEditNoteViewModel
 ) {
+
+    val context = LocalContext.current
+    val openBackArrowDialog = remember { mutableStateOf(false)  }
+    val openDeleteDialog = remember { mutableStateOf(false)  }
+
+    if (openBackArrowDialog.value){
+
+       NoteAlertDialog(
+           title = stringResource(R.string.discard_changes),
+           openedDialog = { dialogState -> openBackArrowDialog.value = dialogState },
+           onConfirmButtonClicked = {navController.navigateUp()})
+
+    }
+
+    if (openDeleteDialog.value){
+
+        NoteAlertDialog(
+            title = stringResource(R.string.delete_note_question),
+            openedDialog = { dialogState -> openDeleteDialog.value = dialogState },
+            onConfirmButtonClicked = {
+                viewModel.deleteNote()
+                navController.navigateUp()})
+
+    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -47,7 +76,13 @@ fun ToolbarView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = {
-            navController.navigateUp()
+
+            if(viewModel.checkContentAndTitleChanges()){
+                navController.navigateUp()
+            } else{
+                openBackArrowDialog.value = true
+            }
+
         }) {
             Icon(
                 imageVector =  Icons.Filled.ArrowBack,
@@ -63,6 +98,7 @@ fun ToolbarView(
 
             IconButton(onClick = {
                 shareNote(true)
+                viewModel.shareNote(context)
 
             }) {
                 Icon(
@@ -74,6 +110,8 @@ fun ToolbarView(
 
             IconButton(onClick = {
                 saveNote(true)
+                viewModel.checkTitle()
+                navController.navigateUp()
 
             }) {
                 Icon(
@@ -84,6 +122,7 @@ fun ToolbarView(
             }
             IconButton(onClick = {
                 deleteNote(true)
+                openDeleteDialog.value = true
 
             }) {
                 Icon(
@@ -100,7 +139,11 @@ fun ToolbarView(
 
 
 @Composable
-fun NoteContentView(title: NoteTextFieldState, content: NoteTextFieldState){
+fun NoteContentView(
+    viewModel: AddEditNoteViewModel){
+
+    val titleState = viewModel.noteTitle.value
+    val contentState = viewModel.noteContent.value
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -108,36 +151,33 @@ fun NoteContentView(title: NoteTextFieldState, content: NoteTextFieldState){
 
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
-            text = title.text,
-            hint = title.hint,
+            text = titleState.text,
+            hint = titleState.hint,
             onValueChange = {
-
+                            viewModel.titleChanged(it)
             },
             onFocusChange = {
+                            viewModel.titleFocusChanged(it)
 
             },
-            isHintVisible = title.isHintVisible,
+            isHintVisible = titleState.isHintVisible,
             singleLine = true,
             textStyle = MaterialTheme.typography.h5
         )
         Spacer(modifier = Modifier.height(16.dp))
         TransparentHintTextField(
-            text = content.text,
-            hint = content.hint,
+            text = contentState.text,
+            hint = contentState.hint,
             onValueChange = {
-
+                            viewModel.contentChanged(it)
             },
             onFocusChange = {
-
+                            viewModel.contentFocusChanged(it)
             },
-            isHintVisible = content.isHintVisible,
+            isHintVisible = contentState.isHintVisible,
             textStyle = MaterialTheme.typography.body1,
             modifier = Modifier.fillMaxHeight()
         )
-
-
-
-
     }
 
 
@@ -154,7 +194,8 @@ fun ToolbarViewPreview() {
                 navController = NavController(LocalContext.current),
                 shareNote = {},
                 saveNote = {},
-                deleteNote = {}
+                deleteNote = {},
+                viewModel = koinViewModel<AddEditNoteViewModel>()
             )
         }
     }
@@ -168,9 +209,7 @@ fun NoteContentViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             NoteContentView(
-                title = NoteTextFieldState("title"),
-                content = NoteTextFieldState("content"),
-
+                viewModel = koinViewModel<AddEditNoteViewModel>()
             )
         }
     }

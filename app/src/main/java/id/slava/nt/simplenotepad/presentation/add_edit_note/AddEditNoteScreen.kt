@@ -1,32 +1,22 @@
 package id.slava.nt.simplenotepad.presentation.add_edit_note
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import id.slava.nt.simplenotepad.domain.models.Note
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun AddEditNoteScreen(
-//    viewModel: AddEditNoteViewModel,
-    noteId: Int,
-    context: Context,
-    navController: NavController
-) {
+    viewModel: AddEditNoteViewModel = koinViewModel(),
+//    noteId: Int,
+    navController: NavController) {
 
-    val viewModel = viewModel<AddEditNoteViewModel>()
-
-    viewModel.setId(noteId)
-
-    val titleState = viewModel.noteTitle.value
-    val contentState = viewModel.noteContent.value
-
+// if not using savedHandleSate then need to pass arguments to view model then get them like params
+//    val viewModel = koinViewModel<AddEditNoteViewModel>( parameters = { parametersOf(noteId) })
 
     Scaffold(
         topBar = {
@@ -37,15 +27,16 @@ fun AddEditNoteScreen(
                     navController = navController,
                     shareNote = {},
                     saveNote = {},
-                    deleteNote = {}
+                    deleteNote = {},
+                    viewModel = viewModel
                 )
 
             }
         },
         content = {
 
-            NoteContentView(titleState,contentState)
-//            Toast.makeText(context,titleState.text,Toast.LENGTH_SHORT).show()
+            NoteContentView(viewModel =  viewModel)
+
         }
     )
 }

@@ -1,7 +1,6 @@
 package id.slava.nt.simplenotepad.presentation.list_notes
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
@@ -13,24 +12,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.presentation.navigation.Screen
-
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun NotesListScreen(
-    viewModel: NotesListViewModel,
-    context: Context,
+    viewModel: NotesListViewModel = koinViewModel(),
     navController: NavController
 ){
 
     val state = viewModel.state.value
-    val listNotes = viewModel.stateTest.value
-
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -41,7 +39,7 @@ fun NotesListScreen(
                     searchDisplay = "",
                     onSearchDisplayChanged = {
                         viewModel.setSearchText(it)},
-                    onSearchDisplayClosed = { },
+                    onSearchDisplayClosed = { viewModel.setSearchText("") },
                     onSearchBy = {
                         when(it){
                             context.getString(R.string.search_title)
@@ -61,17 +59,17 @@ fun NotesListScreen(
                         }
 
                     } )
-
             }
         },
-        content = { NotesList(notes = listNotes
+        content = { NotesList(notes = state.notes
 
         , onNoteItemSelected = { note ->
+                // arguments saved in savedHandleState
                 navController.navigate(Screen.AddEditNoteScreen.route
                         + "?noteId=${note.id}")
 //            // send it to edit note screen through nav component as argument
-//            Toast.makeText(context,it.title, Toast.LENGTH_SHORT).show()
-        }) },
+        },
+            viewModel = viewModel) },
 
         floatingActionButton = {
             FloatingActionButton(

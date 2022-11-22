@@ -16,4 +16,6 @@
     <string name="sort_title">Sort by title</string>
     <string name="delete_note">Delete note</string>
     <string name="save_note">Save note</string>
+    <string name="delete_note_question">Do you want to delete note?</string>
+    <string name="discard_changes">Discard changes?</string>
 </resources>
