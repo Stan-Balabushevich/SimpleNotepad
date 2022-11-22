@@ -1,6 +1,5 @@
 package id.slava.nt.simplenotepad.presentation.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -8,15 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.slava.nt.simplenotepad.presentation.add_edit_note.AddEditNoteScreen
-import id.slava.nt.simplenotepad.presentation.add_edit_note.AddEditNoteViewModel
 import id.slava.nt.simplenotepad.presentation.list_notes.NotesListScreen
-import id.slava.nt.simplenotepad.presentation.list_notes.NotesListViewModel
 
 @Composable
-fun Navigation(
-    noteListViewModel: NotesListViewModel,
-    context: Context,
-) {
+fun Navigation() {
 
     val navController = rememberNavController()
 
@@ -25,7 +19,8 @@ fun Navigation(
         startDestination = Screen.NotesScreen.route
     ) {
         composable(route = Screen.NotesScreen.route) {
-            NotesListScreen(noteListViewModel, context, navController)
+            NotesListScreen(
+                navController = navController)
         }
         composable(
             route = Screen.AddEditNoteScreen.route +
@@ -40,8 +35,8 @@ fun Navigation(
         ) {
             AddEditNoteScreen(
                 navController = navController,
-                context = context,
-                noteId = it.arguments?.getInt("noteId") ?: -1
+                // if not using savedHandleSate then need to pass arguments to view model then get them like params
+//                noteId = it.arguments?.getInt("noteId") ?: -1,
             )
 
         }

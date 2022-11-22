@@ -13,9 +13,9 @@ interface NoteRepository {
 
     suspend fun deleteNote(note: Note)
 
-    suspend fun getSearchTitleFlow(searchText: String): Flow<List<Note>>
+    fun getSearchTitle(searchText: String): Flow<List<Note>>
 
-    suspend fun getSearchContentFlow(searchText: String): Flow<List<Note>>
+    fun getSearchContent(searchText: String): Flow<List<Note>>
 
     fun deleteAll()
 }

@@ -35,32 +35,34 @@ import androidx.compose.ui.unit.sp
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NotesList(notes: List<Note>,
-              onNoteItemSelected: (Note) -> Unit) {
+              onNoteItemSelected: (Note) -> Unit,
+                viewModel: NotesListViewModel) {
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         items(items = notes) { note ->
-            NoteCard(note = note, onNoteItemSelected = onNoteItemSelected)
+            NoteCard(note = note, onNoteItemSelected = onNoteItemSelected, viewModel = viewModel)
         }
     }
 }
 
 
 @Composable
-private fun NoteCard(note: Note, onNoteItemSelected: (Note) -> Unit) {
+private fun NoteCard(note: Note, onNoteItemSelected: (Note) -> Unit , viewModel: NotesListViewModel) {
 
     Card(
         backgroundColor = MaterialTheme.colors.secondaryVariant,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
-        NoteCardContent(note, onNoteItemSelected)
+        NoteCardContent(note = note, onNoteItemSelected = onNoteItemSelected, viewModel = viewModel)
     }
 
 }
 
 @Composable
-private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
+private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit, viewModel: NotesListViewModel) {
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -89,7 +91,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                 Column {
                     Text(text = stringResource(
                          R.string.created,
-                        note.dateCreated.toString().repeat(6)
+                        viewModel.millisToDate(note.dateCreated)
                     ) ,
 
                         style = TextStyle(fontSize = 12.sp)
@@ -114,7 +116,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
                     Text(
                         text = stringResource(
                             R.string.edited,
-                            note.dateEdited.toString().repeat(6)
+                            viewModel.millisToDate(note.dateEdited)
                         ),
                         style = TextStyle(fontSize = 12.sp)
                     )
@@ -154,7 +156,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit) {
 @Composable
 fun DefaultPreview() {
     SimpleNotepadTheme {
-        NotesList(notes = notesTest, onNoteItemSelected = {})
+        NotesList(notes = notesTest, onNoteItemSelected = {}, viewModel = koinViewModel())
     }
 }
 
