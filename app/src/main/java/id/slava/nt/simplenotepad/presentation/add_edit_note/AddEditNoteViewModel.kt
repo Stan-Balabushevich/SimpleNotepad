@@ -8,8 +8,11 @@ import androidx.compose.ui.focus.FocusState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.slava.nt.simplenotepad.domain.models.InvalidNoteException
 import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 // if using savedHandleState no need to pass noteId as parameter
@@ -27,6 +30,9 @@ class AddEditNoteViewModel(
         hint = "Enter some content"
     ))
     val noteContent: State<NoteTextFieldState> = _noteContent
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentNoteId: Int? = null
     private var currentNote: Note? = null
@@ -89,6 +95,7 @@ class AddEditNoteViewModel(
     }
 
     fun checkTitle(){
+
         if(noteTitle.value.text.isBlank()){
 
             if(noteContent.value.text.isNotBlank()){
@@ -113,7 +120,9 @@ class AddEditNoteViewModel(
 
         viewModelScope.launch {
 
-            if(currentNote != null){
+            try {
+
+                if (currentNote != null) {
 
                     noteUseCases.addNote(
                         Note(
@@ -125,16 +134,23 @@ class AddEditNoteViewModel(
                         )
                     )
 
-            } else{
-               noteUseCases.addNote(
-                    Note(
-                        title = noteTitle.value.text,
-                        content = noteContent.value.text,
-                        dateCreated = System.currentTimeMillis(),
-                        dateEdited = System.currentTimeMillis(),
-                        id = currentNoteId
+                } else {
+                    noteUseCases.addNote(
+                        Note(
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            dateCreated = System.currentTimeMillis(),
+                            dateEdited = System.currentTimeMillis(),
+                            id = currentNoteId
+                        )
                     )
-                )
+
+                }
+
+                _eventFlow.emit(UiEvent.ShowSuccessSnackBar)
+            } catch (e: InvalidNoteException){
+
+                _eventFlow.emit(UiEvent.ShowErrorSnackBar)
 
             }
         }
@@ -171,6 +187,11 @@ class AddEditNoteViewModel(
             .appendLine(content)
 
         return builder.toString()
+    }
+
+    sealed class UiEvent {
+        object ShowSuccessSnackBar: UiEvent()
+        object ShowErrorSnackBar: UiEvent()
     }
 
 }
