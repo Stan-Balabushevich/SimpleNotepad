@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
-import id.slava.nt.simplenotepad.domain.util.OrderType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,14 +21,14 @@ const val TIME_EDITED = "Edited"
 
 class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
-    private var getNotesJob: Job? = null
+//    private var getNotesJob: Job? = null
 
     private val _state = mutableStateOf(NotesState())
     val state: State<NotesState> = _state
 
-    private val order = NoteOrder.DateCreated(OrderType.Ascending)
+    private val order = NoteOrder.DateCreated
 
-    val title = "AdFJOIirTZW".toList()
+//    val title = "AdFJOIirTZW".toList()
 
 
     init {
@@ -49,8 +48,16 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 //            }
 //        }
 
-        getNotes(NoteOrder.DateCreated(OrderType.Ascending))
+        getNotes(NoteOrder.DateCreated)
 
+    }
+
+    fun orderBy(noteOrder: NoteOrder){
+        if (state.value.noteOrder::class == noteOrder::class &&
+            state.value.noteOrder == noteOrder){
+            return
+        }
+        getNotes(noteOrder)
     }
 
 
@@ -104,7 +111,7 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
         // what the job for?
 //        getNotesJob?.cancel()
 //        getNotesJob =
-            noteUseCases.getNotes()
+            noteUseCases.getNotes(noteOrder)
             .onEach { notes ->
                 _state.value = state.value.copy(
                     notes = notes,

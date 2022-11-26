@@ -34,7 +34,15 @@ class FakeNoteRepository: NoteRepository {
     }
 
     override fun getSearchContent(searchText: String): Flow<List<Note>> {
-        TODO("Not yet implemented")
+        val contentNotes = mutableListOf<Note>()
+
+        notes.forEach{ note ->
+            if(note.content.contains(searchText)){
+                contentNotes.add(note)
+            }
+        }
+
+        return flow { emit(contentNotes) }
     }
 
     override fun deleteAll() {

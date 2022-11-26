@@ -1,7 +1,6 @@
 package id.slava.nt.simplenotepad.presentation.list_notes
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slava.nt.simplenotepad.R
+import id.slava.nt.simplenotepad.domain.util.NoteOrder
 import id.slava.nt.simplenotepad.presentation.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 
@@ -48,14 +48,14 @@ fun NotesListScreen(
                             -> viewModel.setSearchBy(CONTENT)
                         }
                     },
-                    onSortBy ={
-                        when(it){
-                            context.getString(R.string.sort_created)
-                            -> Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                            context.getString(R.string.sort_edited)
-                            -> Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                            context.getString(R.string.sort_edited) ->
-                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                    onSortBy ={ order ->
+                        when(order){
+                            NoteOrder.Title
+                            -> viewModel.orderBy(order)
+                            NoteOrder.DateCreated
+                            -> viewModel.orderBy(order)
+                            NoteOrder.DateEdited ->
+                                viewModel.orderBy(order)
                         }
 
                     } )

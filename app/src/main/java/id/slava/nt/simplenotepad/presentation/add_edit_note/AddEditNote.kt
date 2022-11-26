@@ -50,6 +50,10 @@ fun ToolbarView(
     val openBackArrowDialog = remember { mutableStateOf(false)  }
     val openDeleteDialog = remember { mutableStateOf(false)  }
 
+
+
+
+
     if (openBackArrowDialog.value){
 
        NoteAlertDialog(
@@ -111,7 +115,7 @@ fun ToolbarView(
             IconButton(onClick = {
                 saveNote(true)
                 viewModel.checkTitle()
-                navController.navigateUp()
+//                navController.navigateUp()
 
             }) {
                 Icon(

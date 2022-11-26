@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.slava.nt.simplenotepad.R
+import id.slava.nt.simplenotepad.domain.util.NoteOrder
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 @Composable
@@ -47,7 +48,7 @@ fun ExpandableSearchView(
     onSearchDisplayChanged: (String) -> Unit,
     onSearchDisplayClosed: () -> Unit,
     onSearchBy: (String) -> Unit,
-    onSortBy: (String) -> Unit,
+    onSortBy: (NoteOrder) -> Unit,
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
     menuOpenInitially: Boolean = false,
@@ -124,7 +125,7 @@ fun CollapsedSearchView(
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
     onSearchMenuItemSelected: (String) -> Unit,
-    onSortMenuItemSelected: (String) -> Unit
+    onSortMenuItemSelected: (NoteOrder) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -206,20 +207,24 @@ fun SearchOptionsMenu(onExpandedChanged: (Boolean) -> Unit,
 
 @Composable
 fun SortOptionsMenu(mExpandedMenu: MutableState<Boolean>,
-                      onDropdownMenuItemSelected: (String) -> Unit) {
+                      onDropdownMenuItemSelected: (NoteOrder) -> Unit) {
 
-    val dropDownOptions = listOf(
-        stringResource(id = R.string.sort_created),
-        stringResource(id = R.string.sort_edited),
-        stringResource(id = R.string.sort_title)
-    )
+    val created = stringResource(id = R.string.sort_created)
+    val edited = stringResource(id = R.string.sort_edited)
+    val title = stringResource(id = R.string.sort_title)
+
+    val dropDownOptions = listOf(created, edited, title)
 
     DropdownMenu(expanded = mExpandedMenu.value,
         onDismissRequest = { mExpandedMenu.value = false })
     {
         dropDownOptions.forEach { label ->
             DropdownMenuItem(onClick = {
-                onDropdownMenuItemSelected(label)
+                when(label){
+                    created -> onDropdownMenuItemSelected(NoteOrder.DateCreated)
+                    edited -> onDropdownMenuItemSelected(NoteOrder.DateEdited)
+                    title -> onDropdownMenuItemSelected(NoteOrder.Title)
+                }
                 mExpandedMenu.value = false
             }) {
                 Text(text = label)
