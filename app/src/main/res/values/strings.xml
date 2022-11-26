@@ -21,4 +21,6 @@
     <string name="saved_success">Note saved successfully</string>
     <string name="save_error">Couldn\'t save note</string>
     <string name="edit_note">Edit note</string>
+    <string name="search_by_title">Search by title</string>
+    <string name="search_by_content">Search by content</string>
 </resources>
