@@ -83,7 +83,7 @@ private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit, view
             Row() {
                 Icon(
                     imageVector =  Icons.Filled.EditNote,
-                    contentDescription = "Edit note",
+                    contentDescription = stringResource(R.string.edit_note),
                     modifier = Modifier
                         .padding(8.dp)
                         .clickable { onNoteItemSelected(note) }
