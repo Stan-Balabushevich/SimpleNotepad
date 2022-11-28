@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ import id.slava.nt.simplenotepad.presentation.util.NoteAlertDialog
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ToolbarView(
     navController: NavController,
@@ -50,8 +53,7 @@ fun ToolbarView(
     val openBackArrowDialog = remember { mutableStateOf(false)  }
     val openDeleteDialog = remember { mutableStateOf(false)  }
 
-
-
+    val keyboardController = LocalSoftwareKeyboardController.current
 
 
     if (openBackArrowDialog.value){
@@ -114,8 +116,8 @@ fun ToolbarView(
 
             IconButton(onClick = {
                 saveNote(true)
-                viewModel.checkTitle()
-//                navController.navigateUp()
+                viewModel.checkTitle(context.getString(R.string.default_title))
+                keyboardController?.hide()
 
             }) {
                 Icon(

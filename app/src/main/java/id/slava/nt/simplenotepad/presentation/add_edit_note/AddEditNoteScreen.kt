@@ -32,8 +32,7 @@ fun AddEditNoteScreen(
             when(event) {
 
                 is AddEditNoteViewModel.UiEvent.ShowSuccessSnackBar ->
-                { scaffoldState.snackbarHostState.showSnackbar(message = context.getString(R.string.saved_success))
-                    navController.navigateUp()}
+                 scaffoldState.snackbarHostState.showSnackbar(message = context.getString(R.string.saved_success))
                 is AddEditNoteViewModel.UiEvent.ShowErrorSnackBar ->
                     scaffoldState.snackbarHostState.showSnackbar(message = context.getString(R.string.save_error))
             }

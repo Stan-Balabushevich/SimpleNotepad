@@ -72,36 +72,43 @@ fun ExpandableSearchView(
 
     val context = LocalContext.current
 
+//    val keyboardController = LocalSoftwareKeyboardController.current
 
     Crossfade(targetState = expanded) { isSearchFieldVisible ->
         when (isSearchFieldVisible) {
-            true -> ExpandedSearchView(
-                searchDisplay = searchDisplay,
-                onSearchDisplayChanged = onSearchDisplayChanged,
-                onSearchDisplayClosed = onSearchDisplayClosed,
-                onExpandedChanged = onExpandedChanged,
-                modifier = modifier,
-                tint = tint,
-                searchTitle = searchTitle
-            )
+            true -> {
+                ExpandedSearchView(
+                    searchDisplay = searchDisplay,
+                    onSearchDisplayChanged = onSearchDisplayChanged,
+                    onSearchDisplayClosed = onSearchDisplayClosed,
+                    onExpandedChanged = onExpandedChanged,
+                    modifier = modifier,
+                    tint = tint,
+                    searchTitle = searchTitle
+                )
+//                keyboardController?.show()
+            }
 
-            false -> CollapsedSearchView(
-                onExpandedChanged = onExpandedChanged,
-                searchMenuOptions = searchMenuOptions,
-                modifier = modifier,
-                tint = tint,
-                onSearchMenuItemSelected = { searchBy ->
-                    searchTitle = when(searchBy){
-                        SearchBy.TITLE -> context.getString(R.string.search_by_title)
-                        SearchBy.CONTENT -> context.getString(R.string.search_by_content)
+            false -> {
+                CollapsedSearchView(
+                    onExpandedChanged = onExpandedChanged,
+                    searchMenuOptions = searchMenuOptions,
+                    modifier = modifier,
+                    tint = tint,
+                    onSearchMenuItemSelected = { searchBy ->
+                        searchTitle = when(searchBy){
+                            SearchBy.TITLE -> context.getString(R.string.search_by_title)
+                            SearchBy.CONTENT -> context.getString(R.string.search_by_content)
+                        }
+                        onSearchBy(searchBy)
+                    },
+                    sortMenuOptions = sortMenuOptions,
+                    onSortMenuItemSelected = {
+                        onSortBy(it)
                     }
-                    onSearchBy(searchBy)
-                },
-                sortMenuOptions = sortMenuOptions,
-                onSortMenuItemSelected = {
-                    onSortBy(it)
-                }
-            )
+                )
+//                keyboardController?.hide()
+            }
         }
     }
 }
@@ -207,8 +214,13 @@ fun SearchOptionsMenu(onExpandedChanged: (Boolean) -> Unit,
                  DropdownMenuItem(onClick = {
 
                      when(label){
-                         title -> onDropdownMenuItemSelected(SearchBy.TITLE)
-                         content -> onDropdownMenuItemSelected(SearchBy.CONTENT)
+                         title -> {
+                             onDropdownMenuItemSelected(SearchBy.TITLE)
+
+                         }
+                         content -> {
+                             onDropdownMenuItemSelected(SearchBy.CONTENT)
+                         }
                      }
                      mExpandedMenu.value = false
                      onExpandedChanged(true)
@@ -259,7 +271,6 @@ fun ExpandedSearchView(
     tint: Color = MaterialTheme.colors.onPrimary,
 ) {
     val focusManager = LocalFocusManager.current
-
     val textFieldFocusRequester = remember { FocusRequester() }
 
     SideEffect {
@@ -269,6 +280,8 @@ fun ExpandedSearchView(
     var textFieldValue by remember {
         mutableStateOf(TextFieldValue(searchDisplay, TextRange(searchDisplay.length)))
     }
+
+
 
     Row(
         modifier = modifier.fillMaxWidth(),

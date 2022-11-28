@@ -14,6 +14,7 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 // if using savedHandleState no need to pass noteId as parameter
 class AddEditNoteViewModel(
@@ -27,7 +28,7 @@ class AddEditNoteViewModel(
     val noteTitle: State<NoteTextFieldState> = _noteTitle
 
     private val _noteContent = mutableStateOf(NoteTextFieldState(
-        hint = "Enter some content"
+        hint = "Enter some content..."
     ))
     val noteContent: State<NoteTextFieldState> = _noteContent
 
@@ -94,7 +95,7 @@ class AddEditNoteViewModel(
 
     }
 
-    fun checkTitle(){
+    fun checkTitle(defaultTitle: String){
 
         if(noteTitle.value.text.isBlank()){
 
@@ -105,7 +106,7 @@ class AddEditNoteViewModel(
                 saveNote()
             }else{
                 _noteTitle.value = noteTitle.value.copy(
-                    text = "Default Title"
+                    text = defaultTitle
                 )
                 saveNote()
             }
@@ -124,26 +125,38 @@ class AddEditNoteViewModel(
 
                 if (currentNote != null) {
 
-                    noteUseCases.addNote(
-                        Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            dateCreated = currentNote!!.dateCreated,
-                            dateEdited = System.currentTimeMillis(),
-                            id = currentNoteId
-                        )
+                    val editedNote = Note(
+                        title = noteTitle.value.text,
+                        content = noteContent.value.text,
+                        dateCreated = currentNote!!.dateCreated,
+                        dateEdited = System.currentTimeMillis(),
+                        id = currentNoteId
                     )
 
+                    currentNote = editedNote
+                    originalTitle = currentNote!!.title
+                    originalContent = currentNote!!.content
+
+                    noteUseCases.addNote(editedNote)
+
                 } else {
-                    noteUseCases.addNote(
-                        Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            dateCreated = System.currentTimeMillis(),
-                            dateEdited = System.currentTimeMillis(),
-                            id = currentNoteId
-                        )
+
+                    val newNoteId = Random.nextInt(from = 0, until = 999999999)
+
+                    val newNote = Note(
+                        title = noteTitle.value.text,
+                        content = noteContent.value.text,
+                        dateCreated = System.currentTimeMillis(),
+                        dateEdited = System.currentTimeMillis(),
+                        id = newNoteId
                     )
+
+                    currentNote = newNote
+                    originalTitle = newNote.title
+                    originalContent = newNote.content
+                    currentNoteId = newNote.id
+
+                    noteUseCases.addNote(newNote)
 
                 }
 

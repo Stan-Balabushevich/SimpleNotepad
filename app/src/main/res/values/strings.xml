@@ -23,4 +23,5 @@
     <string name="edit_note">Edit note</string>
     <string name="search_by_title">Search by title</string>
     <string name="search_by_content">Search by content</string>
+    <string name="default_title">Default Title</string>
 </resources>
