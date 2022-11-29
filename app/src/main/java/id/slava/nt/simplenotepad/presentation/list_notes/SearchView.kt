@@ -72,8 +72,6 @@ fun ExpandableSearchView(
 
     val context = LocalContext.current
 
-//    val keyboardController = LocalSoftwareKeyboardController.current
-
     Crossfade(targetState = expanded) { isSearchFieldVisible ->
         when (isSearchFieldVisible) {
             true -> {
@@ -86,7 +84,6 @@ fun ExpandableSearchView(
                     tint = tint,
                     searchTitle = searchTitle
                 )
-//                keyboardController?.show()
             }
 
             false -> {
@@ -107,7 +104,6 @@ fun ExpandableSearchView(
                         onSortBy(it)
                     }
                 )
-//                keyboardController?.hide()
             }
         }
     }
@@ -290,6 +286,7 @@ fun ExpandedSearchView(
     ) {
         IconButton(onClick = {
             onExpandedChanged(false)
+            textFieldValue = TextFieldValue(text = "")
             onSearchDisplayClosed()
         }) {
             Icon(

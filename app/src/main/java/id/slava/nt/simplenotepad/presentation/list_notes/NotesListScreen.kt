@@ -38,7 +38,8 @@ fun NotesListScreen(
                     searchDisplay = "",
                     onSearchDisplayChanged = {
                         viewModel.setSearchText(it)},
-                    onSearchDisplayClosed = { viewModel.setSearchText("") },
+                    onSearchDisplayClosed = {
+                        viewModel.setSearchText("") },
                     onSearchBy = { searchBy ->
                         when(searchBy){
                             SearchBy.TITLE
