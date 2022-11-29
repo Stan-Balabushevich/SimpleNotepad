@@ -55,10 +55,12 @@ class AddEditNoteViewModel(
                                 text = note.title,
                                 isHintVisible = false
                             )
-                            _noteContent.value = _noteContent.value.copy(
-                                text = note.content,
-                                isHintVisible = false
-                            )
+                            if (originalContent.isNotBlank()){
+                                _noteContent.value = _noteContent.value.copy(
+                                    text = note.content,
+                                    isHintVisible = false
+                                )
+                            }
                     }
                 }
             }
