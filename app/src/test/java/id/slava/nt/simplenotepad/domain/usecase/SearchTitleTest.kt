@@ -12,29 +12,28 @@ import org.junit.Test
 class SearchTitleTest {
 
     private lateinit var fakeNoteRepository: NoteRepository
-    private lateinit var testNote: Note
     private lateinit var searchTitle: SearchTitle
-    private lateinit var addNote: AddNote
 
     @Before
     fun setUp() {
 
-//        fakeNoteRepository = mock()
         fakeNoteRepository = FakeNoteRepository()
-        addNote = AddNote(fakeNoteRepository)
         searchTitle = SearchTitle(fakeNoteRepository)
-        testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5)
+        val testList = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5),
+            Note(title = "dhyrj", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 5),
+            Note(title = "eryuui", content = "orykujtyk", dateCreated = 12L, dateEdited = 21L, id = 5))
 
-        runBlocking {  addNote.invoke(testNote) }
+         runBlocking { testList.forEach {
+             fakeNoteRepository.insertNote(it)
+            }
+         }
 
     }
 
     @Test
-    fun `Check if search by title`() = runBlocking {
+    fun `Check if search by title correct`() = runBlocking {
 
-        val testTitle = "Test title"
-
-//        Mockito.`when`(fakeNoteRepository.getSearchTitle(testNote.title)).thenReturn(flow { listOf(testNote) })
+        val testTitle = "title"
 
         val expected = searchTitle.invoke(testTitle)
         val actual =  listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5))

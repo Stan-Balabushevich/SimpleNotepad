@@ -23,14 +23,23 @@ class AddEditNoteViewModel(
                            private val noteUseCases: NoteUseCases): ViewModel() {
 
     private val _noteTitle = mutableStateOf(NoteTextFieldState(
-        hint = "Enter title..."
+//        hint = "Enter title..."
     ))
     val noteTitle: State<NoteTextFieldState> = _noteTitle
 
+    fun setTitleValue(title: NoteTextFieldState){
+        _noteTitle.value= title
+    }
+
     private val _noteContent = mutableStateOf(NoteTextFieldState(
-        hint = "Enter some content..."
+//        hint = "Enter some content..."
     ))
     val noteContent: State<NoteTextFieldState> = _noteContent
+
+    fun setContentValue(content: NoteTextFieldState){
+        _noteContent.value = content
+
+    }
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -97,7 +106,7 @@ class AddEditNoteViewModel(
 
     }
 
-    fun checkTitle(defaultTitle: String){
+    fun checkTitleAndSaveNote(defaultTitle: String){
 
         if(noteTitle.value.text.isBlank()){
 

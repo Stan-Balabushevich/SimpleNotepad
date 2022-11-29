@@ -20,28 +20,9 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     private val _state = mutableStateOf(NotesState())
     val state: State<NotesState> = _state
 
-//    val title = "AdFJOIirTZW".toList()
-
-
     init {
 
-//        val notesTest = List(10) { Note( id = it,
-//            title = "${title.shuffled().joinToString("")} $it",
-//            content = ("Composem ipsum color sit lazy, " +
-//                    "padding theme elit, sed do bouncy. ")
-//                .repeat(4), dateCreated = it.toLong(), dateEdited = it.toLong() ) }
-//
-//        val notes = mutableListOf<Note>()
-//
-//
-//        notesTest.forEach { note ->
-//            viewModelScope.launch {
-//                noteUseCases.addNote(note)
-//            }
-//        }
-
         getNotes(NoteOrder.DateCreated)
-
     }
 
     fun orderBy(noteOrder: NoteOrder){

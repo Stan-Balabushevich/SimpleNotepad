@@ -116,7 +116,7 @@ fun ToolbarView(
 
             IconButton(onClick = {
                 saveNote(true)
-                viewModel.checkTitle(context.getString(R.string.default_title))
+                viewModel.checkTitleAndSaveNote(context.getString(R.string.default_title))
                 keyboardController?.hide()
 
             }) {
@@ -147,6 +147,9 @@ fun ToolbarView(
 @Composable
 fun NoteContentView(
     viewModel: AddEditNoteViewModel){
+
+    viewModel.setTitleValue(NoteTextFieldState(hint = stringResource(R.string.enter_title)))
+    viewModel.setContentValue(NoteTextFieldState(hint = stringResource(R.string.enter_content)))
 
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value

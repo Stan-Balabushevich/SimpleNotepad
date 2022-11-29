@@ -24,4 +24,6 @@
     <string name="search_by_title">Search by title</string>
     <string name="search_by_content">Search by content</string>
     <string name="default_title">Default Title</string>
+    <string name="enter_title">Enter title…</string>
+    <string name="enter_content">Enter some content…</string>
 </resources>
