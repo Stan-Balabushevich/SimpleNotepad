@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import com.google.common.truth.Truth.assertThat
+import id.slava.nt.simplenotepad.domain.models.InvalidNoteException
 import id.slava.nt.simplenotepad.domain.models.Note
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -47,9 +48,9 @@ class AddEditNoteViewModelTest {
         )
         fakeViewModel = AddEditNoteViewModel(fakeSavedStateHandle,fakeUseCases)
 
-        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
-
-        runBlocking { fakeUseCases.addNote.invoke(note = testNote) }
+//        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
+//
+//        runBlocking { fakeUseCases.addNote.invoke(note = testNote) }
 
     }
 
@@ -91,7 +92,92 @@ class AddEditNoteViewModelTest {
 
         assertThat(actual).isEqualTo(expected)
 
+    }
 
+    @Test
+    fun `Note should not be null when deleting`() = runBlocking {
+
+        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
+
+//        val testNote: Note? = null
+
+        try {
+
+            fakeUseCases.deleteNote(testNote)
+
+        }catch (e: InvalidNoteException){
+
+            assertThat(testNote).isNotNull()
+        }
+    }
+
+    @Test
+    fun `Note should not be null when adding`() = runBlocking {
+
+        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
+
+//        val testNote: Note? = null
+
+        try {
+
+            fakeUseCases.addNote(testNote)
+
+        }catch (e: InvalidNoteException){
+
+            assertThat(testNote).isNotNull()
+        }
+    }
+
+    @Test
+    fun `Note title should not be empty when adding`() = runBlocking {
+
+        fakeViewModel.setTitleValue(NoteTextFieldState(text = "Title"))
+
+        val title = fakeViewModel.noteTitle.value.text
+
+        try {
+
+            fakeViewModel.checkTitleAndSaveNote("")
+
+        }catch (e: InvalidNoteException){
+
+            assertThat(title).isNotEqualTo("")
+        }
+    }
+
+    @Test
+    fun `Title was not changed is true`() = runBlocking {
+
+        fakeViewModel.setTitleValue(NoteTextFieldState(text = ""))
+
+        assertThat(fakeViewModel.checkContentAndTitleNotChanged()).isEqualTo(true)
+
+    }
+
+    @Test
+    fun `Title was not changed is false`() = runBlocking {
+
+        fakeViewModel.setTitleValue(NoteTextFieldState(text = "Title"))
+
+        assertThat(fakeViewModel.checkContentAndTitleNotChanged()).isEqualTo(false)
+
+    }
+
+    @Test
+    fun `Content was not changed is true`() = runBlocking {
+
+        fakeViewModel.setContentValue(NoteTextFieldState(text = ""))
+
+        assertThat(fakeViewModel.checkContentAndTitleNotChanged()).isEqualTo(true)
+
+    }
+
+    @Test
+    fun `Content was not changed is false`() = runBlocking {
+
+        fakeViewModel.setContentValue(NoteTextFieldState(text = "Content"))
+
+        assertThat(fakeViewModel.checkContentAndTitleNotChanged()).isEqualTo(false)
 
     }
 }

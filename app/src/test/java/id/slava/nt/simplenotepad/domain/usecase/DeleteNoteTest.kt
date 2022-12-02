@@ -2,6 +2,7 @@ package id.slava.nt.simplenotepad.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
 import id.slava.nt.simplenotepad.data.repository.FakeNoteRepository
+import id.slava.nt.simplenotepad.domain.models.InvalidNoteException
 import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.domain.repository.NoteRepository
 import kotlinx.coroutines.runBlocking
@@ -11,60 +12,44 @@ import org.junit.Test
 
 class DeleteNoteTest {
 
-//    val fakeNoteRepository = mock<NoteRepository>()
     private lateinit var fakeNoteRepository: NoteRepository
-    private lateinit var testNote: Note
     private lateinit var deleteNote: DeleteNote
-    private lateinit var getNote: GetNote
-    private lateinit var addNote: AddNote
 
     @Before
     fun setUp() {
 
         fakeNoteRepository = FakeNoteRepository()
         deleteNote = DeleteNote(fakeNoteRepository)
-        addNote = AddNote(fakeNoteRepository)
-        getNote = GetNote(fakeNoteRepository)
-
-        val notesToInsert = mutableListOf<Note>()
-        ('a'..'z').forEachIndexed { index, c ->
-            notesToInsert.add(
-                Note(
-                    id = index,
-                    title = c.toString(),
-                    content = c.toString(),
-                    dateCreated = index.toLong(),
-                    dateEdited = index.toLong()
-                )
-            )
-        }
-        notesToInsert.shuffle()
-        runBlocking {
-            notesToInsert.forEach { fakeNoteRepository.insertNote(it) }
-            testNote = getNote(3)!!
-        }
-
-
 
     }
 
     @Test
-    fun `Check if note deleted`() = runBlocking {
+    fun `Null note exception`() = runBlocking{
 
-        val testNoteId = 3
+        val note: Note? = null
 
-        deleteNote.invoke(testNote)
-        val actualNote = getNote(testNoteId)
-        val expected: Note? = null
-
-        assertThat(actualNote).isEqualTo(expected)
+        try {
+            deleteNote.invoke(note = note)
+        } catch (e: InvalidNoteException){
+            assertThat(e.message).isEqualTo("Note does not exist")
+        }
 
     }
 
+    @Test
+    fun `Note should not be null when deleting`() = runBlocking {
 
+        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
 
+//        val testNote: Note? = null
 
+        try {
 
+            deleteNote.invoke(note = testNote)
 
+        }catch (e: InvalidNoteException){
 
+            assertThat(testNote).isNotNull()
+        }
+    }
 }

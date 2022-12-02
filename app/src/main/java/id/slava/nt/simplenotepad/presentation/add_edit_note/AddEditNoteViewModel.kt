@@ -2,6 +2,7 @@ package id.slava.nt.simplenotepad.presentation.add_edit_note
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.focus.FocusState
@@ -14,26 +15,21 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 // if using savedHandleState no need to pass noteId as parameter
 class AddEditNoteViewModel(
 //                            noteId: Int,
-                           val savedStateHandle: SavedStateHandle,
-                           private val noteUseCases: NoteUseCases): ViewModel() {
+    val savedStateHandle: SavedStateHandle,
+    private val noteUseCases: NoteUseCases): ViewModel() {
 
-    private val _noteTitle = mutableStateOf(NoteTextFieldState(
-//        hint = "Enter title..."
-    ))
+    private val _noteTitle = mutableStateOf(NoteTextFieldState())
     val noteTitle: State<NoteTextFieldState> = _noteTitle
 
     fun setTitleValue(title: NoteTextFieldState){
         _noteTitle.value= title
     }
 
-    private val _noteContent = mutableStateOf(NoteTextFieldState(
-//        hint = "Enter some content..."
-    ))
+    private val _noteContent = mutableStateOf(NoteTextFieldState())
     val noteContent: State<NoteTextFieldState> = _noteContent
 
     fun setContentValue(content: NoteTextFieldState){
@@ -41,6 +37,7 @@ class AddEditNoteViewModel(
 
     }
 
+    // shared flow uses for showing one time event like snackbar for example
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -48,30 +45,43 @@ class AddEditNoteViewModel(
     private var currentNote: Note? = null
     private var originalTitle = ""
     private var originalContent = ""
+    private var lastId = 0
 
 
     init {
 
-            savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
-                if(noteIdSaved != -1) {
-                    viewModelScope.launch {
-                        noteUseCases.getNote(noteIdSaved)?.also { note ->
-                            currentNoteId = note.id
-                            currentNote = note
-                            originalTitle = note.title
-                            originalContent = note.content
-                            _noteTitle.value = noteTitle.value.copy(
-                                text = note.title,
+        savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
+            if(noteIdSaved != -1) {
+                viewModelScope.launch {
+                    noteUseCases.getNote(noteIdSaved)?.also { note ->
+                        currentNoteId = note.id
+                        currentNote = note
+                        originalTitle = note.title
+                        originalContent = note.content
+                        _noteTitle.value = noteTitle.value.copy(
+                            text = note.title,
+                            isHintVisible = false
+                        )
+                        if (originalContent.isNotBlank()){
+                            _noteContent.value = _noteContent.value.copy(
+                                text = note.content,
                                 isHintVisible = false
                             )
-                            if (originalContent.isNotBlank()){
-                                _noteContent.value = _noteContent.value.copy(
-                                    text = note.content,
-                                    isHintVisible = false
-                                )
-                            }
+                        }
                     }
                 }
+            }
+               //need to get id for new note
+                else{
+                viewModelScope.launch {
+                    noteUseCases.getNotes.invoke().collect{
+                        if(it.lastIndex != -1){
+                            lastId = it[it.lastIndex].id!!
+                        }
+                        Log.d("AddEditNoteViewModel",lastId.toString())
+                    }
+                }
+
             }
         }
     }
@@ -108,79 +118,83 @@ class AddEditNoteViewModel(
 
     fun checkTitleAndSaveNote(defaultTitle: String){
 
-        if(noteTitle.value.text.isBlank()){
+        if (noteTitle.value.text.isBlank()) {
 
-            if(noteContent.value.text.isNotBlank()){
-                _noteTitle.value = _noteContent.value.copy(
-                    text = _noteContent.value.text.substringBefore(" ")
-                )
-                saveNote()
-            }else{
-                _noteTitle.value = noteTitle.value.copy(
-                    text = defaultTitle
-                )
-                saveNote()
+            try {
+                if (noteContent.value.text.isNotBlank()) {
+                    _noteTitle.value = _noteContent.value.copy(
+                        text = _noteContent.value.text.substringBefore(" ")
+                    )
+                    saveNote()
+                    viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+                } else {
+
+                    if(defaultTitle.isNotBlank()){
+                        _noteTitle.value = noteTitle.value.copy(
+                            text = defaultTitle
+                        )
+                        saveNote()
+                        viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+
+                    } else{ throw InvalidNoteException("Default title is blank") }
+
+                }
+            } catch (e: InvalidNoteException) {
+
+                viewModelScope.launch { _eventFlow.emit(UiEvent.ShowErrorSnackBar) }
+
             }
 
-        } else{
+        } else {
             saveNote()
+            viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+
         }
 
     }
 
     private fun saveNote(){
 
-        viewModelScope.launch {
+        if (currentNote != null) {
 
-            try {
+            val editedNote = Note(
+                title = noteTitle.value.text,
+                content = noteContent.value.text,
+                dateCreated = currentNote!!.dateCreated,
+                dateEdited = System.currentTimeMillis(),
+                id = currentNoteId
+            )
 
-                if (currentNote != null) {
+            currentNote = editedNote
+            originalTitle = currentNote!!.title
+            originalContent = currentNote!!.content
 
-                    val editedNote = Note(
-                        title = noteTitle.value.text,
-                        content = noteContent.value.text,
-                        dateCreated = currentNote!!.dateCreated,
-                        dateEdited = System.currentTimeMillis(),
-                        id = currentNoteId
-                    )
+            viewModelScope.launch { noteUseCases.addNote(editedNote)}
 
-                    currentNote = editedNote
-                    originalTitle = currentNote!!.title
-                    originalContent = currentNote!!.content
+        } else {
 
-                    noteUseCases.addNote(editedNote)
+//                    val newNoteId = Random.nextInt(from = 0, until = 999999999)
+            val newNoteId = lastId + 1
 
-                } else {
+            val newNote = Note(
+                title = noteTitle.value.text,
+                content = noteContent.value.text,
+                dateCreated = System.currentTimeMillis(),
+                dateEdited = System.currentTimeMillis(),
+                id = newNoteId
+            )
 
-                    val newNoteId = Random.nextInt(from = 0, until = 999999999)
+            currentNote = newNote
+            originalTitle = newNote.title
+            originalContent = newNote.content
+            currentNoteId = newNote.id
 
-                    val newNote = Note(
-                        title = noteTitle.value.text,
-                        content = noteContent.value.text,
-                        dateCreated = System.currentTimeMillis(),
-                        dateEdited = System.currentTimeMillis(),
-                        id = newNoteId
-                    )
+            viewModelScope.launch { noteUseCases.addNote(newNote) }
 
-                    currentNote = newNote
-                    originalTitle = newNote.title
-                    originalContent = newNote.content
-                    currentNoteId = newNote.id
-
-                    noteUseCases.addNote(newNote)
-
-                }
-
-                _eventFlow.emit(UiEvent.ShowSuccessSnackBar)
-            } catch (e: InvalidNoteException){
-
-                _eventFlow.emit(UiEvent.ShowErrorSnackBar)
-
-            }
         }
     }
 
-    fun checkContentAndTitleChanges(): Boolean = noteTitle.value.text == originalTitle && noteContent.value.text == originalContent
+    fun checkContentAndTitleNotChanged(): Boolean = noteTitle.value.text == originalTitle && noteContent.value.text == originalContent
 
 
     fun deleteNote(){
@@ -193,9 +207,9 @@ class AddEditNoteViewModel(
         }
     }
 
-   fun shareNote(context: Context){
-       context.startActivity(getShareIntent())
-   }
+    fun shareNote(context: Context){
+        context.startActivity(getShareIntent())
+    }
 
     // Creating our Share Intent
     private fun getShareIntent() : Intent {

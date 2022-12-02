@@ -13,42 +13,73 @@ class AddNoteTest {
 
     private lateinit var addNote: AddNote
     private lateinit var fakeRepository: FakeNoteRepository
-    private lateinit var testNote: Note
 
     @Before
     fun setUp() {
 
         fakeRepository = FakeNoteRepository()
         addNote = AddNote(fakeRepository)
-        testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
 
     }
 
     @Test
-    fun `Note added correctly`() = runBlocking {
-        addNote(testNote)
+    fun `Empty title error`() = runBlocking {
 
-        val testNoteId = 3
+        val note = Note(title = "", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
 
-        val noteAdded = fakeRepository.getNoteById(testNoteId)
+        try {
+            addNote.invoke(note)
+        } catch (e: InvalidNoteException){
 
-        assertThat(noteAdded).isEqualTo(testNote)
+            assertThat(e.message).isEqualTo("Title can't be empty")
 
+        }
     }
 
     @Test
-    fun `Catching error saving note`() = runBlocking {
+    fun `Null note error`() = runBlocking {
+
+        val note = null
+
+        try {
+            addNote.invoke(note)
+        } catch (e: InvalidNoteException){
+
+            assertThat(e.message).isEqualTo("Note does not exist")
+
+        }
+    }
+
+    @Test
+    fun `Note should not be null when adding`() = runBlocking {
+
+        val testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
+
+//        val testNote: Note? = null
 
         try {
 
             addNote.invoke(testNote)
 
-        } catch (e: InvalidNoteException){
+        }catch (e: InvalidNoteException){
 
-            assertThat(e.message).isEqualTo("Could not save note")
-
+            assertThat(testNote).isNotNull()
         }
+    }
 
+    @Test
+    fun `Note title should not be empty when adding`() = runBlocking {
+
+        val testNote = Note(title = "Title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 3)
+
+        try {
+
+            addNote.invoke(testNote)
+
+        }catch (e: InvalidNoteException){
+
+            assertThat(testNote.title).isNotEqualTo("")
+        }
     }
 
 }

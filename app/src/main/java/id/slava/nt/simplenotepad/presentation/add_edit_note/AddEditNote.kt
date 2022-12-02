@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -83,7 +84,7 @@ fun ToolbarView(
     ) {
         IconButton(onClick = {
 
-            if(viewModel.checkContentAndTitleChanges()){
+            if(viewModel.checkContentAndTitleNotChanged()){
                 navController.navigateUp()
             } else{
                 openBackArrowDialog.value = true
@@ -148,8 +149,15 @@ fun ToolbarView(
 fun NoteContentView(
     viewModel: AddEditNoteViewModel){
 
-    viewModel.setTitleValue(NoteTextFieldState(hint = stringResource(R.string.enter_title)))
-    viewModel.setContentValue(NoteTextFieldState(hint = stringResource(R.string.enter_content)))
+    val context = LocalContext.current
+
+
+    LaunchedEffect(key1 = true) {
+
+        viewModel.setTitleValue(NoteTextFieldState(hint = context.getString(R.string.enter_title)))
+        viewModel.setContentValue(NoteTextFieldState(hint = context.getString(R.string.enter_content)))
+
+    }
 
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
