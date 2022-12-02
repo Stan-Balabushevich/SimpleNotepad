@@ -47,9 +47,6 @@ fun AddEditNoteScreen(
             ) {
                 ToolbarView(
                     navController = navController,
-                    shareNote = {},
-                    saveNote = {},
-                    deleteNote = {},
                     viewModel = viewModel
                 )
 

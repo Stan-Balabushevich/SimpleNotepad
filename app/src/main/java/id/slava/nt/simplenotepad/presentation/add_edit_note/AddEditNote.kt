@@ -42,9 +42,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ToolbarView(
     navController: NavController,
-    shareNote: (Boolean) -> Unit,
-    saveNote: (Boolean) -> Unit,
-    deleteNote: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
     viewModel: AddEditNoteViewModel
@@ -104,7 +101,6 @@ fun ToolbarView(
         ){
 
             IconButton(onClick = {
-                shareNote(true)
                 viewModel.shareNote(context)
 
             }) {
@@ -116,7 +112,6 @@ fun ToolbarView(
             }
 
             IconButton(onClick = {
-                saveNote(true)
                 viewModel.checkTitleAndSaveNote(context.getString(R.string.default_title))
                 keyboardController?.hide()
 
@@ -128,7 +123,6 @@ fun ToolbarView(
                 )
             }
             IconButton(onClick = {
-                deleteNote(true)
                 openDeleteDialog.value = true
 
             }) {
@@ -209,9 +203,6 @@ fun ToolbarViewPreview() {
         ) {
             ToolbarView(
                 navController = NavController(LocalContext.current),
-                shareNote = {},
-                saveNote = {},
-                deleteNote = {},
                 viewModel = koinViewModel<AddEditNoteViewModel>()
             )
         }
@@ -226,7 +217,7 @@ fun NoteContentViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             NoteContentView(
-                viewModel = koinViewModel<AddEditNoteViewModel>()
+                viewModel = koinViewModel()
             )
         }
     }

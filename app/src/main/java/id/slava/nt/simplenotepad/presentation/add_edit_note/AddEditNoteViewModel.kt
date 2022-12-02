@@ -2,7 +2,6 @@ package id.slava.nt.simplenotepad.presentation.add_edit_note
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.focus.FocusState
@@ -15,6 +14,7 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 // if using savedHandleState no need to pass noteId as parameter
 class AddEditNoteViewModel(
@@ -37,7 +37,7 @@ class AddEditNoteViewModel(
 
     }
 
-    // shared flow uses for showing one time event like snackbar for example
+    // shared flow is used for showing one time event like snackbar for example
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -45,8 +45,6 @@ class AddEditNoteViewModel(
     private var currentNote: Note? = null
     private var originalTitle = ""
     private var originalContent = ""
-    private var lastId = 0
-
 
     init {
 
@@ -70,18 +68,6 @@ class AddEditNoteViewModel(
                         }
                     }
                 }
-            }
-               //need to get id for new note
-                else{
-                viewModelScope.launch {
-                    noteUseCases.getNotes.invoke().collect{
-                        if(it.lastIndex != -1){
-                            lastId = it[it.lastIndex].id!!
-                        }
-                        Log.d("AddEditNoteViewModel",lastId.toString())
-                    }
-                }
-
             }
         }
     }
@@ -131,7 +117,8 @@ class AddEditNoteViewModel(
 
                     if(defaultTitle.isNotBlank()){
                         _noteTitle.value = noteTitle.value.copy(
-                            text = defaultTitle
+                            text = defaultTitle,
+                            isHintVisible = false
                         )
                         saveNote()
                         viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
@@ -173,8 +160,7 @@ class AddEditNoteViewModel(
 
         } else {
 
-//                    val newNoteId = Random.nextInt(from = 0, until = 999999999)
-            val newNoteId = lastId + 1
+            val newNoteId = Random.nextInt(from = 0, until = 999999999)
 
             val newNote = Note(
                 title = noteTitle.value.text,
@@ -211,7 +197,6 @@ class AddEditNoteViewModel(
         context.startActivity(getShareIntent())
     }
 
-    // Creating our Share Intent
     private fun getShareIntent() : Intent {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")
