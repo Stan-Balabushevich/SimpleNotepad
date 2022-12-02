@@ -9,19 +9,14 @@ class AddNote(
 ) {
 
     @Throws(InvalidNoteException::class)
-    suspend operator fun invoke(note: Note) {
-//        if(note.title.isBlank()) {
-//            throw InvalidNoteException("The title of the note can't be empty.")
-//        }
-//        if(note.content.isBlank()) {
-//            throw InvalidNoteException("The content of the note can't be empty.")
-//        }
+    suspend operator fun invoke(note: Note?) {
 
-        try {
-            repository.insertNote(note)
-        } catch (e: Exception){
-            throw InvalidNoteException("Could not save note")
+        if (note == null){
+            throw InvalidNoteException("Note does not exist")
         }
-
+        if(note.title.isBlank()) {
+            throw InvalidNoteException("Title can't be empty")
+        }
+        repository.insertNote(note)
     }
 }

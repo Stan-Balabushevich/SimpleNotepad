@@ -14,23 +14,30 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 // if using savedHandleState no need to pass noteId as parameter
 class AddEditNoteViewModel(
 //                            noteId: Int,
-                           val savedStateHandle: SavedStateHandle,
-                           private val noteUseCases: NoteUseCases): ViewModel() {
+    val savedStateHandle: SavedStateHandle,
+    private val noteUseCases: NoteUseCases): ViewModel() {
 
-    private val _noteTitle = mutableStateOf(NoteTextFieldState(
-        hint = "Enter title..."
-    ))
+    private val _noteTitle = mutableStateOf(NoteTextFieldState())
     val noteTitle: State<NoteTextFieldState> = _noteTitle
 
-    private val _noteContent = mutableStateOf(NoteTextFieldState(
-        hint = "Enter some content"
-    ))
+    fun setTitleValue(title: NoteTextFieldState){
+        _noteTitle.value= title
+    }
+
+    private val _noteContent = mutableStateOf(NoteTextFieldState())
     val noteContent: State<NoteTextFieldState> = _noteContent
 
+    fun setContentValue(content: NoteTextFieldState){
+        _noteContent.value = content
+
+    }
+
+    // shared flow is used for showing one time event like snackbar for example
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -39,25 +46,26 @@ class AddEditNoteViewModel(
     private var originalTitle = ""
     private var originalContent = ""
 
-
     init {
 
-            savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
-                if(noteIdSaved != -1) {
-                    viewModelScope.launch {
-                        noteUseCases.getNote(noteIdSaved)?.also { note ->
-                            currentNoteId = note.id
-                            currentNote = note
-                            originalTitle = note.title
-                            originalContent = note.content
-                            _noteTitle.value = noteTitle.value.copy(
-                                text = note.title,
-                                isHintVisible = false
-                            )
+        savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
+            if(noteIdSaved != -1) {
+                viewModelScope.launch {
+                    noteUseCases.getNote(noteIdSaved)?.also { note ->
+                        currentNoteId = note.id
+                        currentNote = note
+                        originalTitle = note.title
+                        originalContent = note.content
+                        _noteTitle.value = noteTitle.value.copy(
+                            text = note.title,
+                            isHintVisible = false
+                        )
+                        if (originalContent.isNotBlank()){
                             _noteContent.value = _noteContent.value.copy(
                                 text = note.content,
                                 isHintVisible = false
                             )
+                        }
                     }
                 }
             }
@@ -94,69 +102,85 @@ class AddEditNoteViewModel(
 
     }
 
-    fun checkTitle(){
+    fun checkTitleAndSaveNote(defaultTitle: String){
 
-        if(noteTitle.value.text.isBlank()){
+        if (noteTitle.value.text.isBlank()) {
 
-            if(noteContent.value.text.isNotBlank()){
-                _noteTitle.value = _noteContent.value.copy(
-                    text = _noteContent.value.text.substringBefore(" ")
-                )
-                saveNote()
-            }else{
-                _noteTitle.value = noteTitle.value.copy(
-                    text = "Default Title"
-                )
-                saveNote()
+            try {
+                if (noteContent.value.text.isNotBlank()) {
+                    _noteTitle.value = _noteContent.value.copy(
+                        text = _noteContent.value.text.substringBefore(" ")
+                    )
+                    saveNote()
+                    viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+                } else {
+
+                    if(defaultTitle.isNotBlank()){
+                        _noteTitle.value = noteTitle.value.copy(
+                            text = defaultTitle,
+                            isHintVisible = false
+                        )
+                        saveNote()
+                        viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+
+                    } else{ throw InvalidNoteException("Default title is blank") }
+
+                }
+            } catch (e: InvalidNoteException) {
+
+                viewModelScope.launch { _eventFlow.emit(UiEvent.ShowErrorSnackBar) }
+
             }
 
-        } else{
+        } else {
             saveNote()
+            viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
+
         }
 
     }
 
     private fun saveNote(){
 
-        viewModelScope.launch {
+        if (currentNote != null) {
 
-            try {
+            val editedNote = Note(
+                title = noteTitle.value.text,
+                content = noteContent.value.text,
+                dateCreated = currentNote!!.dateCreated,
+                dateEdited = System.currentTimeMillis(),
+                id = currentNoteId
+            )
 
-                if (currentNote != null) {
+            currentNote = editedNote
+            originalTitle = currentNote!!.title
+            originalContent = currentNote!!.content
 
-                    noteUseCases.addNote(
-                        Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            dateCreated = currentNote!!.dateCreated,
-                            dateEdited = System.currentTimeMillis(),
-                            id = currentNoteId
-                        )
-                    )
+            viewModelScope.launch { noteUseCases.addNote(editedNote)}
 
-                } else {
-                    noteUseCases.addNote(
-                        Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            dateCreated = System.currentTimeMillis(),
-                            dateEdited = System.currentTimeMillis(),
-                            id = currentNoteId
-                        )
-                    )
+        } else {
 
-                }
+            val newNoteId = Random.nextInt(from = 0, until = 999999999)
 
-                _eventFlow.emit(UiEvent.ShowSuccessSnackBar)
-            } catch (e: InvalidNoteException){
+            val newNote = Note(
+                title = noteTitle.value.text,
+                content = noteContent.value.text,
+                dateCreated = System.currentTimeMillis(),
+                dateEdited = System.currentTimeMillis(),
+                id = newNoteId
+            )
 
-                _eventFlow.emit(UiEvent.ShowErrorSnackBar)
+            currentNote = newNote
+            originalTitle = newNote.title
+            originalContent = newNote.content
+            currentNoteId = newNote.id
 
-            }
+            viewModelScope.launch { noteUseCases.addNote(newNote) }
+
         }
     }
 
-    fun checkContentAndTitleChanges(): Boolean = noteTitle.value.text == originalTitle && noteContent.value.text == originalContent
+    fun checkContentAndTitleNotChanged(): Boolean = noteTitle.value.text == originalTitle && noteContent.value.text == originalContent
 
 
     fun deleteNote(){
@@ -169,11 +193,10 @@ class AddEditNoteViewModel(
         }
     }
 
-   fun shareNote(context: Context){
-       context.startActivity(getShareIntent())
-   }
+    fun shareNote(context: Context){
+        context.startActivity(getShareIntent())
+    }
 
-    // Creating our Share Intent
     private fun getShareIntent() : Intent {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")

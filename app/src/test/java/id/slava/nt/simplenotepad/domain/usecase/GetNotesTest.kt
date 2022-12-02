@@ -47,7 +47,7 @@ class GetNotesTest {
         val notes = getNotes(NoteOrder.Title).first()
 
         for(i in 0..notes.size - 2) {
-            assertThat(notes[i].title).isGreaterThan(notes[i+1].title)
+            assertThat(notes[i].title).isLessThan(notes[i+1].title)
         }
     }
 

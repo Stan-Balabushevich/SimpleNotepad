@@ -6,18 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
-import kotlinx.coroutines.Job
+import id.slava.nt.simplenotepad.domain.util.SearchBy
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.*
-
-const val TITLE = "Title"
-const val CONTENT = "Content"
-const val TIME_ADDED = "Added"
-const val TIME_EDITED = "Edited"
 
 class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
@@ -26,30 +20,9 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     private val _state = mutableStateOf(NotesState())
     val state: State<NotesState> = _state
 
-    private val order = NoteOrder.DateCreated
-
-//    val title = "AdFJOIirTZW".toList()
-
-
     init {
 
-//        val notesTest = List(10) { Note( id = it,
-//            title = "${title.shuffled().joinToString("")} $it",
-//            content = ("Composem ipsum color sit lazy, " +
-//                    "padding theme elit, sed do bouncy. ")
-//                .repeat(4), dateCreated = it.toLong(), dateEdited = it.toLong() ) }
-//
-//        val notes = mutableListOf<Note>()
-//
-//
-//        notesTest.forEach { note ->
-//            viewModelScope.launch {
-//                noteUseCases.addNote(note)
-//            }
-//        }
-
         getNotes(NoteOrder.DateCreated)
-
     }
 
     fun orderBy(noteOrder: NoteOrder){
@@ -61,25 +34,23 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     }
 
 
-    private val _searchBy = MutableStateFlow("")
-//    val searchBy: StateFlow<String>
-//        get() = _searchBy
+    private val _searchBy = MutableStateFlow(SearchBy.TITLE)
 
-    fun setSearchBy(searchBy: String){
+    fun setSearchBy(searchBy: SearchBy){
         _searchBy.value = searchBy
     }
 
-    private val _searchText = MutableStateFlow("")
-    val searchText: StateFlow<String>
-        get() = _searchText
-
     fun setSearchText(searchText: String){
-        when(_searchBy.value){
-            TITLE -> searchByTitle(searchText,order)
-            CONTENT -> searchByContent(searchText,order)
-            "" -> getNotes(order)
 
+        if (searchText.isNotBlank()){
+            when(_searchBy.value){
+                SearchBy.TITLE -> searchByTitle(searchText,state.value.noteOrder)
+                SearchBy.CONTENT -> searchByContent(searchText,state.value.noteOrder)
+            }
+        }else{
+          getNotes(state.value.noteOrder)
         }
+
     }
     private  fun searchByTitle(text: String, noteOrder: NoteOrder){
 

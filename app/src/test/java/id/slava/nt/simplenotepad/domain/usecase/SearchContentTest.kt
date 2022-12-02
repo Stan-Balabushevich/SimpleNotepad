@@ -12,26 +12,28 @@ import org.junit.Test
 class SearchContentTest {
 
     private lateinit var fakeNoteRepository: NoteRepository
-    private lateinit var testNote: Note
     private lateinit var searchContent: SearchContent
-    private lateinit var addNote: AddNote
 
     @Before
     fun setUp() {
 
         fakeNoteRepository = FakeNoteRepository()
-        addNote = AddNote(fakeNoteRepository)
         searchContent = SearchContent(fakeNoteRepository)
-        testNote = Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5)
 
-        runBlocking {  addNote.invoke(testNote) }
+        val testList = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5),
+            Note(title = "dhyrj", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 5),
+            Note(title = "eryuui", content = "orykujtyk", dateCreated = 12L, dateEdited = 21L, id = 5))
+
+        runBlocking { testList.forEach {
+            fakeNoteRepository.insertNote(it)
+        }  }
 
     }
 
     @Test
-    fun `Check if search by content`() = runBlocking{
+    fun `Check if search by content correct`() = runBlocking{
 
-        val testContent = "test content"
+        val testContent = "content"
         val expected = searchContent.invoke(testContent)
         val actual =  listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5))
 

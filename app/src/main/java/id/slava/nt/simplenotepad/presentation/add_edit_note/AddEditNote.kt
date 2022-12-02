@@ -19,12 +19,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,12 +38,10 @@ import id.slava.nt.simplenotepad.presentation.util.NoteAlertDialog
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ToolbarView(
     navController: NavController,
-    shareNote: (Boolean) -> Unit,
-    saveNote: (Boolean) -> Unit,
-    deleteNote: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
     viewModel: AddEditNoteViewModel
@@ -50,8 +51,7 @@ fun ToolbarView(
     val openBackArrowDialog = remember { mutableStateOf(false)  }
     val openDeleteDialog = remember { mutableStateOf(false)  }
 
-
-
+    val keyboardController = LocalSoftwareKeyboardController.current
 
 
     if (openBackArrowDialog.value){
@@ -81,7 +81,7 @@ fun ToolbarView(
     ) {
         IconButton(onClick = {
 
-            if(viewModel.checkContentAndTitleChanges()){
+            if(viewModel.checkContentAndTitleNotChanged()){
                 navController.navigateUp()
             } else{
                 openBackArrowDialog.value = true
@@ -101,7 +101,6 @@ fun ToolbarView(
         ){
 
             IconButton(onClick = {
-                shareNote(true)
                 viewModel.shareNote(context)
 
             }) {
@@ -113,9 +112,8 @@ fun ToolbarView(
             }
 
             IconButton(onClick = {
-                saveNote(true)
-                viewModel.checkTitle()
-//                navController.navigateUp()
+                viewModel.checkTitleAndSaveNote(context.getString(R.string.default_title))
+                keyboardController?.hide()
 
             }) {
                 Icon(
@@ -125,7 +123,6 @@ fun ToolbarView(
                 )
             }
             IconButton(onClick = {
-                deleteNote(true)
                 openDeleteDialog.value = true
 
             }) {
@@ -145,6 +142,16 @@ fun ToolbarView(
 @Composable
 fun NoteContentView(
     viewModel: AddEditNoteViewModel){
+
+    val context = LocalContext.current
+
+
+    LaunchedEffect(key1 = true) {
+
+        viewModel.setTitleValue(NoteTextFieldState(hint = context.getString(R.string.enter_title)))
+        viewModel.setContentValue(NoteTextFieldState(hint = context.getString(R.string.enter_content)))
+
+    }
 
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
@@ -196,9 +203,6 @@ fun ToolbarViewPreview() {
         ) {
             ToolbarView(
                 navController = NavController(LocalContext.current),
-                shareNote = {},
-                saveNote = {},
-                deleteNote = {},
                 viewModel = koinViewModel<AddEditNoteViewModel>()
             )
         }
@@ -213,7 +217,7 @@ fun NoteContentViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             NoteContentView(
-                viewModel = koinViewModel<AddEditNoteViewModel>()
+                viewModel = koinViewModel()
             )
         }
     }

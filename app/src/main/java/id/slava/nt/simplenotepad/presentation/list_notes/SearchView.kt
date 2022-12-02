@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -40,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
+import id.slava.nt.simplenotepad.domain.util.SearchBy
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
 
 @Composable
@@ -47,7 +49,7 @@ fun ExpandableSearchView(
     searchDisplay: String,
     onSearchDisplayChanged: (String) -> Unit,
     onSearchDisplayClosed: () -> Unit,
-    onSearchBy: (String) -> Unit,
+    onSearchBy: (SearchBy) -> Unit,
     onSortBy: (NoteOrder) -> Unit,
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
@@ -68,33 +70,41 @@ fun ExpandableSearchView(
 
     var searchTitle by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
 
     Crossfade(targetState = expanded) { isSearchFieldVisible ->
         when (isSearchFieldVisible) {
-            true -> ExpandedSearchView(
-                searchDisplay = searchDisplay,
-                onSearchDisplayChanged = onSearchDisplayChanged,
-                onSearchDisplayClosed = onSearchDisplayClosed,
-                onExpandedChanged = onExpandedChanged,
-                modifier = modifier,
-                tint = tint,
-                searchTitle = searchTitle
-            )
+            true -> {
+                ExpandedSearchView(
+                    searchDisplay = searchDisplay,
+                    onSearchDisplayChanged = onSearchDisplayChanged,
+                    onSearchDisplayClosed = onSearchDisplayClosed,
+                    onExpandedChanged = onExpandedChanged,
+                    modifier = modifier,
+                    tint = tint,
+                    searchTitle = searchTitle
+                )
+            }
 
-            false -> CollapsedSearchView(
-                onExpandedChanged = onExpandedChanged,
-                searchMenuOptions = searchMenuOptions,
-                modifier = modifier,
-                tint = tint,
-                onSearchMenuItemSelected = {
-                    searchTitle = it
-                    onSearchBy(it)
-                },
-                sortMenuOptions = sortMenuOptions,
-                onSortMenuItemSelected = {
-                    onSortBy(it)
-                }
-            )
+            false -> {
+                CollapsedSearchView(
+                    onExpandedChanged = onExpandedChanged,
+                    searchMenuOptions = searchMenuOptions,
+                    modifier = modifier,
+                    tint = tint,
+                    onSearchMenuItemSelected = { searchBy ->
+                        searchTitle = when(searchBy){
+                            SearchBy.TITLE -> context.getString(R.string.search_by_title)
+                            SearchBy.CONTENT -> context.getString(R.string.search_by_content)
+                        }
+                        onSearchBy(searchBy)
+                    },
+                    sortMenuOptions = sortMenuOptions,
+                    onSortMenuItemSelected = {
+                        onSortBy(it)
+                    }
+                )
+            }
         }
     }
 }
@@ -124,7 +134,7 @@ fun CollapsedSearchView(
     sortMenuOptions: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
-    onSearchMenuItemSelected: (String) -> Unit,
+    onSearchMenuItemSelected: (SearchBy) -> Unit,
     onSortMenuItemSelected: (NoteOrder) -> Unit
 ) {
     Row(
@@ -184,18 +194,30 @@ fun CollapsedSearchView(
 @Composable
 fun SearchOptionsMenu(onExpandedChanged: (Boolean) -> Unit,
                       mExpandedMenu: MutableState<Boolean>,
-                      onDropdownMenuItemSelected: (String) -> Unit){
+                      onDropdownMenuItemSelected: (SearchBy) -> Unit){
+
+    val title = stringResource(id = R.string.search_title)
+    val content = stringResource(id = R.string.search_content)
 
     val dropDownOptions = listOf(
-        stringResource(id = R.string.search_title),
-        stringResource(id = R.string.search_content))
+        title,
+        content)
     
     DropdownMenu(expanded = mExpandedMenu.value,
         onDismissRequest = { mExpandedMenu.value = false })
          {
              dropDownOptions.forEach { label ->
                  DropdownMenuItem(onClick = {
-                     onDropdownMenuItemSelected(label)
+
+                     when(label){
+                         title -> {
+                             onDropdownMenuItemSelected(SearchBy.TITLE)
+
+                         }
+                         content -> {
+                             onDropdownMenuItemSelected(SearchBy.CONTENT)
+                         }
+                     }
                      mExpandedMenu.value = false
                      onExpandedChanged(true)
                  }) {
@@ -245,7 +267,6 @@ fun ExpandedSearchView(
     tint: Color = MaterialTheme.colors.onPrimary,
 ) {
     val focusManager = LocalFocusManager.current
-
     val textFieldFocusRequester = remember { FocusRequester() }
 
     SideEffect {
@@ -256,6 +277,8 @@ fun ExpandedSearchView(
         mutableStateOf(TextFieldValue(searchDisplay, TextRange(searchDisplay.length)))
     }
 
+
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
@@ -263,6 +286,7 @@ fun ExpandedSearchView(
     ) {
         IconButton(onClick = {
             onExpandedChanged(false)
+            textFieldValue = TextFieldValue(text = "")
             onSearchDisplayClosed()
         }) {
             Icon(

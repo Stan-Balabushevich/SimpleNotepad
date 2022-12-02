@@ -11,12 +11,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
+import id.slava.nt.simplenotepad.domain.util.SearchBy
 import id.slava.nt.simplenotepad.presentation.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 
@@ -28,7 +28,6 @@ fun NotesListScreen(
 ){
 
     val state = viewModel.state.value
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -39,13 +38,14 @@ fun NotesListScreen(
                     searchDisplay = "",
                     onSearchDisplayChanged = {
                         viewModel.setSearchText(it)},
-                    onSearchDisplayClosed = { viewModel.setSearchText("") },
-                    onSearchBy = {
-                        when(it){
-                            context.getString(R.string.search_title)
-                            -> viewModel.setSearchBy(TITLE)
-                            context.getString(R.string.search_content)
-                            -> viewModel.setSearchBy(CONTENT)
+                    onSearchDisplayClosed = {
+                        viewModel.setSearchText("") },
+                    onSearchBy = { searchBy ->
+                        when(searchBy){
+                            SearchBy.TITLE
+                            -> viewModel.setSearchBy(searchBy)
+                            SearchBy.CONTENT
+                            -> viewModel.setSearchBy(searchBy)
                         }
                     },
                     onSortBy ={ order ->
