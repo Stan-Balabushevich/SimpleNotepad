@@ -2,6 +2,7 @@ package id.slava.nt.simplenotepad.presentation.list_notes
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
@@ -105,10 +106,17 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
     private fun writeTextTofile(context: Context, text: String){
 
-        val path = context.filesDir
+        try{
 
-         File(path,"notes_list_simplenotepad.txt").writeText(text)
+            val path = context.filesDir
 
+            File(path,"notes_list_simplenotepad.txt").writeText(text)
+
+        } catch (e: Exception){
+
+            Log.d("writeTextTofile",e.message.toString())
+
+        }
 
     }
 
@@ -141,10 +149,10 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
             )
             val intent = Intent(Intent.ACTION_SEND)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.setType("*/*")
+            intent.type = "*/*"
             intent.putExtra(Intent.EXTRA_STREAM, uri)
             intent.putExtra(Intent.EXTRA_SUBJECT, "List of Notes from SimpleNotepad")
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }
 
