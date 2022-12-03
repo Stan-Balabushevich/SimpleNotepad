@@ -18,6 +18,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -42,7 +43,9 @@ import androidx.compose.ui.unit.dp
 import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
 import id.slava.nt.simplenotepad.domain.util.SearchBy
+import id.slava.nt.simplenotepad.presentation.util.NoteAlertDialog
 import id.slava.nt.simplenotepad.ui.theme.SimpleNotepadTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ExpandableSearchView(
@@ -54,7 +57,8 @@ fun ExpandableSearchView(
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
     menuOpenInitially: Boolean = false,
-    tint: Color = MaterialTheme.colors.onPrimary
+    tint: Color = MaterialTheme.colors.onPrimary,
+    viewModel: NotesListViewModel
 ) {
     val (expanded, onExpandedChanged) = remember {
         mutableStateOf(expandedInitially)
@@ -102,7 +106,8 @@ fun ExpandableSearchView(
                     sortMenuOptions = sortMenuOptions,
                     onSortMenuItemSelected = {
                         onSortBy(it)
-                    }
+                    },
+                    viewModel = viewModel
                 )
             }
         }
@@ -128,6 +133,15 @@ fun SortIcon(iconTint: Color) {
 }
 
 @Composable
+fun ShareNotesIcon(iconTint: Color) {
+    Icon(
+        imageVector =  Icons.Filled.Share,
+        contentDescription = stringResource(R.string.share_all_notes),
+        tint = iconTint
+    )
+}
+
+@Composable
 fun CollapsedSearchView(
     onExpandedChanged: (Boolean) -> Unit,
     searchMenuOptions: MutableState<Boolean>,
@@ -135,8 +149,28 @@ fun CollapsedSearchView(
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colors.onPrimary,
     onSearchMenuItemSelected: (SearchBy) -> Unit,
-    onSortMenuItemSelected: (NoteOrder) -> Unit
+    onSortMenuItemSelected: (NoteOrder) -> Unit,
+    viewModel: NotesListViewModel
 ) {
+
+    val openShareDialog = remember { mutableStateOf(false)  }
+    val context = LocalContext.current
+
+    if (openShareDialog.value){
+
+        NoteAlertDialog(
+            title = stringResource(R.string.share_all_notes_txt),
+            openedDialog = { dialogState -> openShareDialog.value = dialogState },
+            onConfirmButtonClicked = {
+
+                viewModel.shareFile(context)
+                openShareDialog.value = false
+
+            })
+
+    }
+
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -172,6 +206,13 @@ fun CollapsedSearchView(
                     onDropdownMenuItemSelected = onSearchMenuItemSelected)
                 else -> {}
             }
+
+            IconButton(onClick = {
+                openShareDialog.value = true
+            }) {
+                ShareNotesIcon(iconTint = tint)
+            }
+
             IconButton(onClick = {
                 sortMenuOptions.value= true
 
@@ -331,7 +372,8 @@ fun CollapsedSearchViewPreview() {
                 onSearchDisplayChanged = {},
                 onSearchDisplayClosed = {},
                 onSearchBy = {},
-                onSortBy = {}
+                onSortBy = {},
+                viewModel = koinViewModel()
             )
         }
     }
@@ -350,7 +392,8 @@ fun ExpandedSearchViewPreview() {
                 expandedInitially = true,
                 onSearchDisplayClosed = {},
                 onSearchBy = {},
-                onSortBy = {}
+                onSortBy = {},
+                viewModel = koinViewModel()
             )
         }
     }

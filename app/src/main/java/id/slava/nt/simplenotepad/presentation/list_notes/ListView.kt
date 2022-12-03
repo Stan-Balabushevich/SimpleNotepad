@@ -50,7 +50,9 @@ fun NotesList(notes: List<Note>,
 
 
 @Composable
-private fun NoteCard(note: Note, onNoteItemSelected: (Note) -> Unit , viewModel: NotesListViewModel) {
+private fun NoteCard(note: Note,
+                     onNoteItemSelected: (Note) -> Unit ,
+                     viewModel: NotesListViewModel) {
 
     Card(
         backgroundColor = MaterialTheme.colors.secondaryVariant,
@@ -62,7 +64,8 @@ private fun NoteCard(note: Note, onNoteItemSelected: (Note) -> Unit , viewModel:
 }
 
 @Composable
-private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit, viewModel: NotesListViewModel) {
+private fun NoteCardContent(note: Note, onNoteItemSelected: (Note) -> Unit,
+                            viewModel: NotesListViewModel) {
     var expanded by remember { mutableStateOf(false) }
 
     Row(

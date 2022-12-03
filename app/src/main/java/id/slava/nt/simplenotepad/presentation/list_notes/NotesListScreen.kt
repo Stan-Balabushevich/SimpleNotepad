@@ -58,7 +58,8 @@ fun NotesListScreen(
                                 viewModel.orderBy(order)
                         }
 
-                    } )
+                    } ,
+                viewModel = viewModel)
             }
         },
         content = { NotesList(notes = state.notes

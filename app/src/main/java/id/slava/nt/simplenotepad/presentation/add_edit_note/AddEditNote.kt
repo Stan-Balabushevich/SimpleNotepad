@@ -67,7 +67,8 @@ fun ToolbarView(
 
         NoteAlertDialog(
             title = stringResource(R.string.delete_note_question),
-            openedDialog = { dialogState -> openDeleteDialog.value = dialogState },
+            openedDialog = { dialogState ->
+                openDeleteDialog.value = dialogState },
             onConfirmButtonClicked = {
                 viewModel.deleteNote()
                 navController.navigateUp()})
