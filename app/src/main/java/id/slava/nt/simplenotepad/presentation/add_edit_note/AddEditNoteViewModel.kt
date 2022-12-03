@@ -26,15 +26,18 @@ class AddEditNoteViewModel(
     val noteTitle: State<NoteTextFieldState> = _noteTitle
 
     fun setTitleValue(title: NoteTextFieldState){
-        _noteTitle.value= title
+        if(_noteTitle.value.text.isBlank()){
+            _noteTitle.value= title
+        }
     }
 
     private val _noteContent = mutableStateOf(NoteTextFieldState())
     val noteContent: State<NoteTextFieldState> = _noteContent
 
     fun setContentValue(content: NoteTextFieldState){
-        _noteContent.value = content
-
+        if (_noteContent.value.text.isBlank()){
+            _noteContent.value = content
+        }
     }
 
     // shared flow is used for showing one time event like snackbar for example
