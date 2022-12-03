@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SimpleNotepad</string>
+    <string name="app_name">SNotepad</string>
     <string name="search">Search</string>
     <string name="back_arrow">Back arrow</string>
     <string name="notes">Notes</string>
@@ -26,4 +26,6 @@
     <string name="default_title">Default Title</string>
     <string name="enter_title">Enter title…</string>
     <string name="enter_content">Enter some content…</string>
+    <string name="share_all_notes">Share all notes</string>
+    <string name="share_all_notes_txt">Share all notes as txt file?</string>
 </resources>
