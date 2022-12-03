@@ -164,6 +164,7 @@ fun CollapsedSearchView(
             onConfirmButtonClicked = {
 
                 viewModel.shareFile(context)
+                openShareDialog.value = false
 
             })
 
