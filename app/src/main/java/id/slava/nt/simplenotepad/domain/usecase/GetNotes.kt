@@ -11,7 +11,7 @@ class GetNotes(
 ) {
 
     operator fun invoke(
-        noteOrder: NoteOrder = NoteOrder.Title
+        noteOrder: NoteOrder = NoteOrder.DateCreated
     ): Flow<List<Note>> {
         return repository.getNotes().map { notes ->
             when (noteOrder) {
