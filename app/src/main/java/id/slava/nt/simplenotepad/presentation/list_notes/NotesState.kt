@@ -6,6 +6,5 @@ import id.slava.nt.simplenotepad.domain.util.NoteOrder
 
 data class NotesState(
     val notes: List<Note> = emptyList(),
-    val noteOrder: NoteOrder = NoteOrder.DateCreated,
-    val isOrderSectionVisible: Boolean = false
+    val noteOrder: NoteOrder = NoteOrder.DateCreated
 )
