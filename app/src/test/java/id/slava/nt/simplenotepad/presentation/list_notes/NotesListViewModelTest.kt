@@ -77,20 +77,20 @@ class NotesListViewModelTest {
 
     }
 
-    @Test
-    fun `search notes by title correct`() {
-
-        fakeViewModel.setSearchBy(SearchBy.TITLE)
-        fakeViewModel.setSearchText("Test")
-
-        val actual = runBlocking {  fakeViewModel.state.first()}
-        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
-            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2)),
-        noteOrder = NoteOrder.DateCreated)
-
-        assertThat(actual).isEqualTo(expected)
-
-    }
+//    @Test
+//    fun `search notes by title correct`() {
+//
+//        fakeViewModel.setSearchBy(SearchBy.TITLE)
+//        fakeViewModel.setSearchText("Test")
+//
+//        val actual = runBlocking {  fakeViewModel.state.first()}
+//        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
+//            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2)),
+//        noteOrder = NoteOrder.DateCreated)
+//
+//        assertThat(actual).isEqualTo(expected)
+//
+//    }
 
 //    @Test
 //    fun `search notes by content correct`() {
