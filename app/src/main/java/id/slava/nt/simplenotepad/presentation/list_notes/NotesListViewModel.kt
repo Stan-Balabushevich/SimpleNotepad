@@ -2,20 +2,23 @@ package id.slava.nt.simplenotepad.presentation.list_notes
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.slava.nt.simplenotepad.BuildConfig
+import id.slava.nt.simplenotepad.R
 import id.slava.nt.simplenotepad.domain.models.Note
 import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
 import id.slava.nt.simplenotepad.domain.util.SearchBy
+import id.slava.nt.simplenotepad.domain.util.UiText
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,8 +27,14 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
 //    private var getNotesJob: Job? = null
 
-    private val _state = mutableStateOf(NotesState())
-    val state: State<NotesState> = _state
+//    private val _state = mutableStateOf(NotesState())
+//    val state: State<NotesState> = _state
+
+    private val _state = MutableStateFlow(NotesState())
+    val state = _state.asStateFlow()
+
+    private val errorChannel = Channel<UiText>()
+    val errors = errorChannel.receiveAsFlow()
 
     init {
 
@@ -42,6 +51,7 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
 
     private val _searchBy = MutableStateFlow(SearchBy.TITLE)
+//    private val _searchBy = mutableStateOf(SearchBy.TITLE)
 
     fun setSearchBy(searchBy: SearchBy){
         _searchBy.value = searchBy
@@ -106,17 +116,8 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
     private fun writeTextTofile(context: Context, text: String){
 
-        try{
-
             val path = context.filesDir
-
             File(path,"notes_list_simplenotepad.txt").writeText(text)
-
-        } catch (e: Exception){
-
-            Log.d("writeTextTofile",e.message.toString())
-
-        }
 
     }
 
@@ -135,11 +136,22 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
     fun shareFile(context: Context){
 
-        writeTextTofile(context,shareNotesBuilder(state.value.notes))
+        try{
+
+            writeTextTofile(context,shareNotesBuilder(state.value.notes))
+
+        }catch (e: Exception){
+
+            viewModelScope.launch {
+
+                errorChannel.send(UiText.StringResource(R.string.save_file_error))
+            }
+
+            return
+        }
 
         val path = context.filesDir
         val file = File(path, "notes_list_simplenotepad.txt")
-
 
         if (file.exists()) {
             val uri = FileProvider.getUriForFile(
@@ -154,10 +166,15 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
             intent.putExtra(Intent.EXTRA_SUBJECT, "List of Notes from SimpleNotepad")
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
+        } else{
+
+            viewModelScope.launch {
+
+                errorChannel.send(UiText.StringResource(R.string.save_file_error))
+            }
+
         }
 
     }
-
-
 
 }

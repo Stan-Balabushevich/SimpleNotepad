@@ -9,8 +9,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -26,10 +30,24 @@ fun NotesListScreen(
     viewModel: NotesListViewModel = koinViewModel(),
     navController: NavController
 ){
+//    compose state
+//    val state = viewModel.state.value
+    // flow state
+    val state = viewModel.state.collectAsState().value
+    val context = LocalContext.current
 
-    val state = viewModel.state.value
+    val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(key1 = scaffoldState) {
+        viewModel.errors.collect { error ->
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = error.asString(context)
+            )
+        }
+    }
 
     Scaffold(
+        // to see snack ber!
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 backgroundColor = MaterialTheme.colors.primary

@@ -11,9 +11,12 @@ import id.slava.nt.simplenotepad.domain.usecase.GetNotes
 import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.usecase.SearchContent
 import id.slava.nt.simplenotepad.domain.usecase.SearchTitle
+import id.slava.nt.simplenotepad.domain.util.NoteOrder
+import id.slava.nt.simplenotepad.domain.util.SearchBy
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
@@ -44,7 +47,7 @@ class NotesListViewModelTest {
         fakeViewModel = NotesListViewModel(fakeUseCases)
 
         val testList = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
-            Note(title = "dhyrj", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2),
+            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2),
             Note(title = "eryuui", content = "orykujtyk", dateCreated = 12L, dateEdited = 21L, id = 3))
 
         runBlocking { testList.forEach {
@@ -52,13 +55,16 @@ class NotesListViewModelTest {
             }
         }
 
+
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown(){
+
         Dispatchers.resetMain() // reset the main dispatcher to the original Main dispatcher
         mainThreadSurrogate.close()
+
     }
 
     @Test
@@ -71,19 +77,32 @@ class NotesListViewModelTest {
 
     }
 
-//    @Test
-//    fun `fun setSearchText called with text`(){
-//
-//        fakeViewModel.setSearchText("gfjfyhj")
-//
-//        val actual = fakeViewModel.state.value.notes
-//        val expected =  listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 5),
-//            Note(title = "dhyrj", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 5),
-//            Note(title = "eryuui", content = "orykujtyk", dateCreated = 12L, dateEdited = 21L, id = 5))
-//
-//        assertThat(actual).isEqualTo(expected)
-//
-//
-//
-//    }
+    @Test
+    fun `search notes by title correct`() {
+
+        fakeViewModel.setSearchBy(SearchBy.TITLE)
+        fakeViewModel.setSearchText("Test")
+
+        val actual = runBlocking {  fakeViewModel.state.first()}
+        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
+            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2)),
+        noteOrder = NoteOrder.DateCreated)
+
+        assertThat(actual).isEqualTo(expected)
+
+    }
+
+    @Test
+    fun `search notes by content correct`() {
+
+        fakeViewModel.setSearchBy(SearchBy.CONTENT)
+        fakeViewModel.setSearchText("test")
+
+        val actual =   runBlocking {  fakeViewModel.state.first()}
+        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1)),
+            noteOrder = NoteOrder.DateCreated)
+
+        assertThat(actual).isEqualTo(expected)
+
+    }
 }
