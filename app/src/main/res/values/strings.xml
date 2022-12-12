@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SNotepad</string>
+    <string name="app_name">S_Notepad</string>
     <string name="search">Search</string>
     <string name="back_arrow">Back arrow</string>
     <string name="notes">Notes</string>
@@ -19,7 +19,7 @@
     <string name="delete_note_question">Do you want to delete note?</string>
     <string name="discard_changes">Discard changes?</string>
     <string name="saved_success">Note saved successfully</string>
-    <string name="save_error">Couldn\'t save note</string>
+    <string name="save_error">Could not save note</string>
     <string name="edit_note">Edit note</string>
     <string name="search_by_title">Search by title</string>
     <string name="search_by_content">Search by content</string>
