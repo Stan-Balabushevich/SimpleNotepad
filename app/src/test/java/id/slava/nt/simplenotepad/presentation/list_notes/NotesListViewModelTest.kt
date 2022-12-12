@@ -97,7 +97,7 @@ class NotesListViewModelTest {
     }
 
     @Test
-    fun `search notes by content correct`() = runBlocking{
+    fun `search notes by content correct again`() = runBlocking{
 
         fakeViewModel.setSearchBy(SearchBy.CONTENT)
         fakeViewModel.setSearchText("test")
