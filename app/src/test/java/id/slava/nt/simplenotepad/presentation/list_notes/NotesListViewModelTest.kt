@@ -147,20 +147,20 @@ class NotesListViewModelTest {
 
     }
 
-    @Test
-    fun `Order by has changed to date edited order`() = runBlocking{
-
-        fakeViewModel.orderBy(NoteOrder.DateEdited)
-
-        val actual = fakeViewModel.state
-        val expected = NoteOrder.DateEdited
-
-        actual.test {
-            val emission = awaitItem()
-            assertThat(emission.noteOrder).isEqualTo(expected)
-            cancelAndIgnoreRemainingEvents()
-
-        }
-
-    }
+//    @Test
+//    fun `Order by has changed to date edited order`() = runBlocking{
+//
+//        fakeViewModel.orderBy(NoteOrder.DateEdited)
+//
+//        val actual = fakeViewModel.state
+//        val expected = NoteOrder.DateEdited
+//
+//        actual.test {
+//            val emission = awaitItem()
+//            assertThat(emission.noteOrder).isEqualTo(expected)
+//            cancelAndIgnoreRemainingEvents()
+//
+//        }
+//
+//    }
 }
