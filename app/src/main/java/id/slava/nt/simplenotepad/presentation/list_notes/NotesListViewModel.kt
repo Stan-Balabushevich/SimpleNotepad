@@ -12,6 +12,7 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
 import id.slava.nt.simplenotepad.domain.util.SearchBy
 import id.slava.nt.simplenotepad.domain.util.UiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,9 @@ import java.util.*
 
 class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
-//    private var getNotesJob: Job? = null
+    // Job allows you to cancel coroutine which is your network or database request for example,
+    // and it is taking too long or you want to relaunch it
+    private var getNotesJob: Job? = null
 
 //    private val _state = mutableStateOf(NotesState())
 //    val state: State<NotesState> = _state
@@ -96,9 +99,10 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     }
 
     private fun getNotes(noteOrder: NoteOrder) {
-        // what the job for?
-//        getNotesJob?.cancel()
-//        getNotesJob =
+        // Job allows you to cancel coroutine which is your network or database request for example,
+        // and it is taking too long or you want to relaunch it
+        getNotesJob?.cancel()
+        getNotesJob =
             noteUseCases.getNotes(noteOrder)
             .onEach { notes ->
                 _state.value = state.value.copy(
@@ -117,7 +121,7 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     private fun writeTextTofile(context: Context, text: String){
 
             val path = context.filesDir
-            File(path,"notes_list_simplenotepad.txt").writeText(text)
+            File(path,"notes_list_snotepad.txt").writeText(text)
 
     }
 
@@ -151,7 +155,7 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
         }
 
         val path = context.filesDir
-        val file = File(path, "notes_list_simplenotepad.txt")
+        val file = File(path, "notes_list_snotepad.txt")
 
         if (file.exists()) {
             val uri = FileProvider.getUriForFile(

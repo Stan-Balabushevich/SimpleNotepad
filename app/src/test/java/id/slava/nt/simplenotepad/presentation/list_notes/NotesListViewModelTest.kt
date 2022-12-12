@@ -1,5 +1,6 @@
 package id.slava.nt.simplenotepad.presentation.list_notes
 
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import id.slava.nt.simplenotepad.data.repository.FakeNoteRepository
 import id.slava.nt.simplenotepad.domain.models.Note
@@ -16,7 +17,6 @@ import id.slava.nt.simplenotepad.domain.util.SearchBy
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
@@ -47,8 +47,8 @@ class NotesListViewModelTest {
         fakeViewModel = NotesListViewModel(fakeUseCases)
 
         val testList = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
-            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2),
-            Note(title = "eryuui", content = "orykujtyk", dateCreated = 12L, dateEdited = 21L, id = 3))
+            Note(title = "Test", content = "jmpmk", dateCreated = 13L, dateEdited = 22L, id = 2),
+            Note(title = "eryuui", content = "orykujtyk", dateCreated = 14L, dateEdited = 23L, id = 3))
 
         runBlocking { testList.forEach {
             fakeNoteRepository.insertNote(it)
@@ -77,32 +77,90 @@ class NotesListViewModelTest {
 
     }
 
-//    @Test
-//    fun `search notes by title correct`() {
-//
-//        fakeViewModel.setSearchBy(SearchBy.TITLE)
-//        fakeViewModel.setSearchText("Test")
-//
-//        val actual = runBlocking {  fakeViewModel.state.first()}
-//        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
-//            Note(title = "Test", content = "jmpmk", dateCreated = 12L, dateEdited = 21L, id = 2)),
-//        noteOrder = NoteOrder.DateCreated)
-//
-//        assertThat(actual).isEqualTo(expected)
-//
-//    }
+    @Test
+    fun `search notes by title correct`() = runBlocking {
 
-//    @Test
-//    fun `search notes by content correct`() {
-//
-//        fakeViewModel.setSearchBy(SearchBy.CONTENT)
-//        fakeViewModel.setSearchText("test")
-//
-//        val actual =   runBlocking {  fakeViewModel.state.first()}
-//        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1)),
-//            noteOrder = NoteOrder.DateCreated)
-//
-//        assertThat(actual).isEqualTo(expected)
-//
-//    }
+        fakeViewModel.setSearchBy(SearchBy.TITLE)
+        fakeViewModel.setSearchText("Test")
+
+        val actual =  fakeViewModel.state
+        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1),
+            Note(title = "Test", content = "jmpmk", dateCreated = 13L, dateEdited = 22L, id = 2)),
+        noteOrder = NoteOrder.DateCreated)
+
+        actual.test {
+            val emission = awaitItem()
+            assertThat(emission).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+
+        }
+    }
+
+    @Test
+    fun `search notes by content correct`() = runBlocking{
+
+        fakeViewModel.setSearchBy(SearchBy.CONTENT)
+        fakeViewModel.setSearchText("test")
+
+        val actual =  fakeViewModel.state
+        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1)),
+            noteOrder = NoteOrder.DateCreated)
+
+        actual.test {
+            val emission = awaitItem()
+            assertThat(emission).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+
+        }
+    }
+
+    @Test
+    fun `Order by has not changed`() = runBlocking{
+
+        fakeViewModel.orderBy(NoteOrder.DateCreated)
+
+        val actual = fakeViewModel.state
+        val expected = NotesState().noteOrder
+
+        actual.test {
+            val emission = awaitItem()
+            assertThat(emission.noteOrder).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+
+        }
+    }
+
+    @Test
+    fun `Order by has changed to title order`() = runBlocking{
+
+        fakeViewModel.orderBy(NoteOrder.Title)
+
+        val actual = fakeViewModel.state
+        val expected = NoteOrder.Title
+
+        actual.test {
+            val emission = awaitItem()
+            assertThat(emission.noteOrder).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+
+        }
+
+    }
+
+    @Test
+    fun `Order by has changed to date edited order`() = runBlocking{
+
+        fakeViewModel.orderBy(NoteOrder.DateEdited)
+
+        val actual = fakeViewModel.state
+        val expected = NoteOrder.DateEdited
+
+        actual.test {
+            val emission = awaitItem()
+            assertThat(emission.noteOrder).isEqualTo(expected)
+            cancelAndIgnoreRemainingEvents()
+
+        }
+
+    }
 }
