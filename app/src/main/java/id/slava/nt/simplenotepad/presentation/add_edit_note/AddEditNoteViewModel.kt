@@ -75,6 +75,21 @@ class AddEditNoteViewModel(
         }
     }
 
+    // if we have another argument in route arguments
+    private fun getSharedIntentText(){
+
+        savedStateHandle.get<String>("getSharedText")?.let { data ->
+
+            if (data.isNotBlank()){
+                _noteContent.value = _noteContent.value.copy(
+                    text = data,
+                    isHintVisible = false
+                )
+            }
+
+        }
+    }
+
     fun titleChanged(text: String){
         _noteTitle.value = noteTitle.value.copy(
             text = text
@@ -112,7 +127,7 @@ class AddEditNoteViewModel(
             try {
                 if (noteContent.value.text.isNotBlank()) {
                     _noteTitle.value = _noteContent.value.copy(
-                        text = _noteContent.value.text.substringBefore(" ")
+                        text = _noteContent.value.text.trim().substringBefore(" ")
                     )
                     saveNote()
                     viewModelScope.launch { _eventFlow.emit(UiEvent.ShowSuccessSnackBar) }
