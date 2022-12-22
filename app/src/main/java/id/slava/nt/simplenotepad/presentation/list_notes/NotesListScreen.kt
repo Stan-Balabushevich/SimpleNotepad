@@ -28,8 +28,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NotesListScreen(
     viewModel: NotesListViewModel = koinViewModel(),
-    navController: NavController
-){
+    navController: NavController, ){
+
+
 //    compose state
 //    val state = viewModel.state.value
     // flow state
@@ -37,6 +38,7 @@ fun NotesListScreen(
     val context = LocalContext.current
 
     val scaffoldState = rememberScaffoldState()
+
     LaunchedEffect(key1 = scaffoldState) {
         viewModel.errors.collect { error ->
             scaffoldState.snackbarHostState.showSnackbar(

@@ -142,15 +142,20 @@ fun ToolbarView(
 
 @Composable
 fun NoteContentView(
-    viewModel: AddEditNoteViewModel){
+    viewModel: AddEditNoteViewModel,
+    sharedText: String?){
 
     val context = LocalContext.current
 
-
     LaunchedEffect(key1 = true) {
 
-        viewModel.setTitleValue(NoteTextFieldState(hint = context.getString(R.string.enter_title)))
-        viewModel.setContentValue(NoteTextFieldState(hint = context.getString(R.string.enter_content)))
+        if (sharedText != null && sharedText.isNotBlank()){
+            viewModel.titleChanged(sharedText.trim().substringBefore(" "))
+            viewModel.contentChanged(sharedText)
+        } else{
+            viewModel.setTitleValue(NoteTextFieldState(hint = context.getString(R.string.enter_title)))
+            viewModel.setContentValue(NoteTextFieldState(hint = context.getString(R.string.enter_content)))
+        }
 
     }
 
@@ -218,7 +223,8 @@ fun NoteContentViewPreview() {
             color = MaterialTheme.colors.background
         ) {
             NoteContentView(
-                viewModel = koinViewModel()
+                viewModel = koinViewModel(),
+                sharedText = "deep link text"
             )
         }
     }
