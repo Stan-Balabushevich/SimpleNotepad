@@ -18,6 +18,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AddEditNoteScreen(
     viewModel: AddEditNoteViewModel = koinViewModel(),
 //    noteId: Int,
+    sharedText: String?,
     navController: NavController) {
 
 // if not using savedHandleSate then need to pass arguments to view model then get them like params
@@ -54,7 +55,7 @@ fun AddEditNoteScreen(
         },
         content = {
 
-            NoteContentView(viewModel =  viewModel)
+            NoteContentView(viewModel =  viewModel, sharedText = sharedText)
 
         }
     )

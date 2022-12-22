@@ -42,6 +42,8 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
     init {
 
         getNotes(NoteOrder.DateCreated)
+
+
     }
 
     fun orderBy(noteOrder: NoteOrder){
@@ -115,8 +117,6 @@ class NotesListViewModel(private val noteUseCases: NoteUseCases): ViewModel() {
 
     fun millisToDate(seconds: Long): String
             = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ROOT).format(seconds)
-
-
 
     private fun writeTextTofile(context: Context, text: String){
 
