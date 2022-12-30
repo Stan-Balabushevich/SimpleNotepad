@@ -87,7 +87,7 @@ fun NotesListScreen(
         , onNoteItemSelected = { note ->
                 // arguments saved in savedHandleState
                 navController.navigate(Screen.AddEditNoteScreen.route
-                        + "?noteId=${note.id}")
+                        + "?noteId=${note.id}&getSharedText=${false}")
 //            // send it to edit note screen through nav component as argument
         },
             viewModel = viewModel) },
