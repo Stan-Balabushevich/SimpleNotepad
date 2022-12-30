@@ -27,8 +27,8 @@ fun Navigation(sharedText: String?) {
         composable(
             route = Screen.AddEditNoteScreen.route +
                     // if needs more arguments
-//                    "?noteId={noteId}&getSharedText={getSharedText}"
-                    "?noteId={noteId}",
+                    "?noteId={noteId}&getSharedText={getSharedText}",
+//                    "?noteId={noteId}",
             arguments = listOf(
                 navArgument(
                     name = "noteId"
@@ -36,12 +36,12 @@ fun Navigation(sharedText: String?) {
                     type = NavType.IntType
                     defaultValue = -1
                 },
-//                navArgument(
-//                    name = "getSharedText"
-//                ) {
-//                    type = NavType.StringType
-//                    defaultValue = ""
-//                }
+                navArgument(
+                    name = "getSharedText"
+                ) {
+                    type = NavType.BoolType
+                    defaultValue = true
+                }
             ),
             // navDeepLink needs any action for triggering note detail
             // screen while comes from the other site or app for sharing text. DeepLink effect.

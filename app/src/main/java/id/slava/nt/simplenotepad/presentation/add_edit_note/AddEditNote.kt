@@ -147,12 +147,19 @@ fun NoteContentView(
 
     val context = LocalContext.current
 
+// can get intent extras like this as well. from activity safer?
+//    val activity = LocalContext.current as Activity
+//    val data = intent.getStringExtra(Intent.EXTRA_TEXT)
+
     LaunchedEffect(key1 = true) {
 
-        if (sharedText != null && sharedText.isNotBlank()){
-            viewModel.titleChanged(sharedText.trim().substringBefore(" "))
-            viewModel.contentChanged(sharedText)
-        } else{
+        if(viewModel.sharedText.value){
+            if (sharedText != null && sharedText.isNotBlank()){
+                viewModel.titleChanged(sharedText.trim().substringBefore(" "))
+                viewModel.contentChanged(sharedText)
+            }
+        }
+        else{
             viewModel.setTitleValue(NoteTextFieldState(hint = context.getString(R.string.enter_title)))
             viewModel.setContentValue(NoteTextFieldState(hint = context.getString(R.string.enter_content)))
         }
