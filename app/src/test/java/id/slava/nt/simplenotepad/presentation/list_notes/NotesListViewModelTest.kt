@@ -13,7 +13,6 @@ import id.slava.nt.simplenotepad.domain.usecase.NoteUseCases
 import id.slava.nt.simplenotepad.domain.usecase.SearchContent
 import id.slava.nt.simplenotepad.domain.usecase.SearchTitle
 import id.slava.nt.simplenotepad.domain.util.NoteOrder
-import id.slava.nt.simplenotepad.domain.util.SearchBy
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -96,23 +95,23 @@ class NotesListViewModelTest {
 //        }
 //    }
 
-    @Test
-    fun `search notes by content correct again`() = runBlocking{
-
-        fakeViewModel.setSearchBy(SearchBy.CONTENT)
-        fakeViewModel.setSearchText("test")
-
-        val actual =  fakeViewModel.state
-        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1)),
-            noteOrder = NoteOrder.DateCreated)
-
-        actual.test {
-            val emission = awaitItem()
-            assertThat(emission).isEqualTo(expected)
-            cancelAndIgnoreRemainingEvents()
-
-        }
-    }
+//    @Test
+//    fun `search notes by content correct again`() = runBlocking{
+//
+//        fakeViewModel.setSearchBy(SearchBy.CONTENT)
+//        fakeViewModel.setSearchText("test")
+//
+//        val actual =  fakeViewModel.state
+//        val expected = NotesState( notes = listOf(Note(title = "Test title", content = "test content", dateCreated = 12L, dateEdited = 21L, id = 1)),
+//            noteOrder = NoteOrder.DateCreated)
+//
+//        actual.test {
+//            val emission = awaitItem()
+//            assertThat(emission).isEqualTo(expected)
+//            cancelAndIgnoreRemainingEvents()
+//
+//        }
+//    }
 
     @Test
     fun `Order by has not changed`() = runBlocking{

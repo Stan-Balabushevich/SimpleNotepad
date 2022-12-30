@@ -40,6 +40,9 @@ class AddEditNoteViewModel(
         }
     }
 
+    private val _sharedText = mutableStateOf(true)
+    val sharedText: State<Boolean>  = _sharedText
+
     // shared flow is used for showing one time event like snackbar for example
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -50,6 +53,8 @@ class AddEditNoteViewModel(
     private var originalContent = ""
 
     init {
+
+        getSharedIntentText()
 
         savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
             if(noteIdSaved != -1) {
@@ -78,14 +83,9 @@ class AddEditNoteViewModel(
     // if we have another argument in route arguments
     private fun getSharedIntentText(){
 
-        savedStateHandle.get<String>("getSharedText")?.let { data ->
+        savedStateHandle.get<Boolean>("getSharedText")?.let { data ->
 
-            if (data.isNotBlank()){
-                _noteContent.value = _noteContent.value.copy(
-                    text = data,
-                    isHintVisible = false
-                )
-            }
+                _sharedText.value = data
 
         }
     }

@@ -96,7 +96,8 @@ fun NotesListScreen(
             FloatingActionButton(
                 modifier = Modifier.padding(28.dp),
                 onClick = {
-                    navController.navigate(Screen.AddEditNoteScreen.route)
+                    navController.navigate(Screen.AddEditNoteScreen.route
+                                + "?getSharedText=${false}")
                 }) {
                 Icon(
                     Icons.Filled.Add,
