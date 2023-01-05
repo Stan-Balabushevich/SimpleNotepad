@@ -19,4 +19,5 @@ val BlueGrey80 = Color(0xFFc6d2cb)
 val BlueGrey90 = Color(0xFFC7D1F7)
 
 val Blue100 = Color(0xFF0BD2E4)
-val LightYellow100 =  Color(0xFFF8E004)
+val LightYellow100 =  Color(0xFFFAE634)
+val DarkYellow100 =  Color(0xFF8D821E)

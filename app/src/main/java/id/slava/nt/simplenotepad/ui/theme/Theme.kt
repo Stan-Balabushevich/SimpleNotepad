@@ -37,11 +37,11 @@ private val LightColorPalette = lightColors(
 )
 
 private val DarkColorPaletteUk = darkColors(
-    primary = GreenGrey80,
-    primaryVariant = GreenGrey30,
-    secondary = Green100,
-    secondaryVariant = LightGreen100,
-    background = GreenGrey30
+    primary = BlueGrey80,
+    primaryVariant = BlueGrey30,
+    secondary = Blue100,
+    secondaryVariant = DarkYellow100,
+    background = BlueGrey30
 )
 
 private val LightColorPaletteUk = lightColors(
@@ -69,7 +69,7 @@ fun SimpleNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(),
         when (Locale.getDefault().language){
 
             "uk"->  if (darkTheme) {
-                            DarkColorPalette
+                            DarkColorPaletteUk
                         } else {
                             LightColorPaletteUk }
             else -> { if (darkTheme) {

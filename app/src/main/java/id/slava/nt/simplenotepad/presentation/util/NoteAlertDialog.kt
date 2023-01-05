@@ -6,14 +6,16 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import id.slava.nt.simplenotepad.R
 
 @Composable
 fun NoteAlertDialog(
     modifier: Modifier = Modifier,
-    title: String = "Default Title",
+    title: String = "",
     message: String = "",
-    confirmButton: String = "Yes",
-    dismissButton: String = "Cancel",
+    confirmButton: String = stringResource(R.string.yes),
+    dismissButton: String = stringResource(R.string.cancel),
     onConfirmButtonClicked: () -> Unit,
     openedDialog: (Boolean) -> Unit,
 ) {

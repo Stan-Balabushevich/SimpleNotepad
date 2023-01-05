@@ -27,4 +27,6 @@
     <string name="share_all_notes">Share all notes</string>
     <string name="share_all_notes_txt">Share all notes as txt file?</string>
     <string name="save_file_error">Could not save file</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 </resources>

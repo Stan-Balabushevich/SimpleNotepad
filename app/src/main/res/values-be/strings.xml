@@ -28,4 +28,6 @@
     <string name="enter_content">Увядзіце змесціва…</string>
     <string name="share_all_notes">Падзяліцца усімі нататкамі</string>
     <string name="share_all_notes_txt">Падзяліцца усімі нататкамі як тэкставы файл?</string>
+    <string name="yes">Так</string>
+    <string name="cancel">Адмяніць</string>
 </resources>

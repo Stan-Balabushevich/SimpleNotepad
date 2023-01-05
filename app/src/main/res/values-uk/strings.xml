@@ -28,4 +28,6 @@
     <string name="share_all_notes">Поділіться всіма нотатками</string>
     <string name="share_all_notes_txt">Поділитися всіма нотатками як текстовим файлом?</string>
     <string name="save_file_error">Не вдалося зберегти файл</string>
+    <string name="cancel">Cкасувати</string>
+    <string name="yes">Так</string>
 </resources>
