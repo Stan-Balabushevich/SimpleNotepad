@@ -6,7 +6,10 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.res.colorResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import id.slava.nt.simplenotepad.R
+import java.util.*
 
 private val DarkColorPalette = darkColors(
     primary = GreenGrey80,
@@ -33,30 +36,74 @@ private val LightColorPalette = lightColors(
     */
 )
 
+private val DarkColorPaletteUk = darkColors(
+    primary = GreenGrey80,
+    primaryVariant = GreenGrey30,
+    secondary = Green100,
+    secondaryVariant = LightGreen100,
+    background = GreenGrey30
+)
+
+private val LightColorPaletteUk = lightColors(
+    primary = BlueGrey50,
+    primaryVariant = BlueGrey30,
+    secondary = Blue100,
+    secondaryVariant = LightYellow100,
+    background = BlueGrey90
+
+    /* Other default colors to override
+    background = Color.White,
+    surface = Color.White,
+    onPrimary = Color.White,
+    onSecondary = Color.Black,
+    onBackground = Color.Black,
+    onSurface = Color.Black,
+    */
+)
+
 @Composable
-fun SimpleNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
+fun SimpleNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(),
+                       content: @Composable () -> Unit) {
+
+    val colors =
+        when (Locale.getDefault().language){
+
+            "uk"->  if (darkTheme) {
+                            DarkColorPalette
+                        } else {
+                            LightColorPaletteUk }
+            else -> { if (darkTheme) {
+                            DarkColorPalette
+                        } else {
+                            LightColorPalette }
+            }
+        }
+
+
+//    val colors = if (darkTheme) {
+//        DarkColorPalette
+//    } else {
+//       LightColorPalette
+//    }
+
+    val statusNavigationBarColor = colorResource(id = R.color.statNavbarColor)
 
 
     val systemUiController = rememberSystemUiController()
+
+
     SideEffect {
         // to change system bar color
         systemUiController.setStatusBarColor(
-            color = GreenGrey30,
+            color = statusNavigationBarColor,
             darkIcons = false
         )
         // to change navigation bar color
         systemUiController.setNavigationBarColor(
-            color = GreenGrey30,
+            color = statusNavigationBarColor,
             darkIcons = false
         )
     }
-
-
 
 
     MaterialTheme(

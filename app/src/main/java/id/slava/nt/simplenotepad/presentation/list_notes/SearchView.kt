@@ -98,8 +98,8 @@ fun ExpandableSearchView(
                     tint = tint,
                     onSearchMenuItemSelected = { searchBy ->
                         searchTitle = when(searchBy){
-                            SearchBy.TITLE -> context.getString(R.string.search_by_title)
-                            SearchBy.CONTENT -> context.getString(R.string.search_by_content)
+                            SearchBy.TITLE -> context.getString(R.string.search_title)
+                            SearchBy.CONTENT -> context.getString(R.string.search_content)
                         }
                         onSearchBy(searchBy)
                     },

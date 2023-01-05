@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Блокнот</string>
+    <string name="search">Пошук</string>
+    <string name="back_arrow">Стрілка назад</string>
+    <string name="notes">Слава Україні !</string>
+    <string name="ftb_desc">Додати нову нотатку</string>
+    <string name="search_title">Пошук за назвою</string>
+    <string name="search_content">Пошук за вмістом</string>
+    <string name="show_less">Показувати менше</string>
+    <string name="show_more">Показати більше</string>
+    <string name="sort">Порядкувати нотатки</string>
+    <string name="sort_created">Порядкувати за створено</string>
+    <string name="sort_edited">Порядкувати за відредаговано</string>
+    <string name="created">Створено: %1$s</string>
+    <string name="edited">Відредаговано: %1$s</string>
+    <string name="sort_title">Порядкувати за назвою</string>
+    <string name="delete_note">Видалити замітку</string>
+    <string name="save_note">Зберегти нотатку</string>
+    <string name="delete_note_question">Ви бажаєте видалити нотатку?</string>
+    <string name="discard_changes">Скасувати зміни?</string>
+    <string name="saved_success">Нотатку успішно збережено</string>
+    <string name="save_error">Не вдалося зберегти нотатку</string>
+    <string name="edit_note">Редагувати примітку</string>
+    <string name="default_title">Назва за замовчуванням</string>
+    <string name="enter_title">Введіть назву…</string>
+    <string name="enter_content">Введіть вміст…</string>
+    <string name="share_all_notes">Поділіться всіма нотатками</string>
+    <string name="share_all_notes_txt">Поділитися всіма нотатками як текстовим файлом?</string>
+    <string name="save_file_error">Не вдалося зберегти файл</string>
+</resources>
