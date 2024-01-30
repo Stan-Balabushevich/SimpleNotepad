@@ -1,15 +1,18 @@
 package id.slava.nt.simplenotepad.ui.theme
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.core.view.WindowCompat
 import id.slava.nt.simplenotepad.R
-import java.util.*
+import java.util.Locale
 
 private val DarkColorPalette = darkColors(
     primary = GreenGrey80,
@@ -87,24 +90,16 @@ fun SimpleNotepadTheme(darkTheme: Boolean = isSystemInDarkTheme(),
 //    }
 
     val statusNavigationBarColor = colorResource(id = R.color.statNavbarColor)
+    val view = LocalView.current
 
-
-    val systemUiController = rememberSystemUiController()
-
-
-    SideEffect {
-        // to change system bar color
-        systemUiController.setStatusBarColor(
-            color = statusNavigationBarColor,
-            darkIcons = false
-        )
-        // to change navigation bar color
-        systemUiController.setNavigationBarColor(
-            color = statusNavigationBarColor,
-            darkIcons = false
-        )
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = statusNavigationBarColor.toArgb() // change color status bar here
+            window.navigationBarColor = statusNavigationBarColor.toArgb()  // to change navigation bar color
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
     }
-
 
     MaterialTheme(
         colors = colors,
