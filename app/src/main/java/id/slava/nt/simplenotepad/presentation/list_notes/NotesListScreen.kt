@@ -48,7 +48,7 @@ fun NotesListScreen(
     }
 
     Scaffold(
-        // to see snack ber!
+        // to see snack bar!
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -88,9 +88,7 @@ fun NotesListScreen(
                 // arguments saved in savedHandleState
                 navController.navigate(Screen.AddEditNoteScreen.route
                         + "?noteId=${note.id}&getSharedText=${false}")
-//            // send it to edit note screen through nav component as argument
-        },
-            viewModel = viewModel) },
+        }) },
 
         floatingActionButton = {
             FloatingActionButton(

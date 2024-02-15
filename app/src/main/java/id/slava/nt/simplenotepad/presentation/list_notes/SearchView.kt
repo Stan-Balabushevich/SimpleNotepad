@@ -16,10 +16,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -126,7 +126,7 @@ fun SearchIcon(iconTint: Color) {
 @Composable
 fun SortIcon(iconTint: Color) {
     Icon(
-        imageVector =  Icons.Filled.Sort,
+        imageVector = Icons.AutoMirrored.Filled.Sort,
         contentDescription = stringResource(id = R.string.sort),
         tint = iconTint
     )
@@ -163,7 +163,7 @@ fun CollapsedSearchView(
             openedDialog = { dialogState -> openShareDialog.value = dialogState },
             onConfirmButtonClicked = {
 
-                viewModel.shareFile(context)
+                viewModel.shareTxtFile(context)
                 openShareDialog.value = false
 
             })
@@ -331,7 +331,7 @@ fun ExpandedSearchView(
             onSearchDisplayClosed()
         }) {
             Icon(
-                imageVector =  Icons.Filled.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.back_arrow),
                 tint = tint
             )
