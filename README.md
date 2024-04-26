@@ -33,7 +33,7 @@ the MVVM architectural pattern, and Room for local database storage. The codebas
 
 We welcome contributions to the project! If you'd like to contribute, please follow these steps:
 
-    1. Fork the repository.
-    2. Create a new branch with a descriptive name.
-    3. Make your changes and commit them.
-    4. Submit a pull request with a clear description of your changes.
+1. Fork the repository.
+2. Create a new branch with a descriptive name.
+3. Make your changes and commit them.
+4. Submit a pull request with a clear description of your changes.
