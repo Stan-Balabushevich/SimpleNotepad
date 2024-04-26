@@ -59,6 +59,8 @@ class AddEditNoteViewModel(
         savedStateHandle.get<Int>("noteId")?.let { noteIdSaved ->
             if(noteIdSaved != -1) {
                 viewModelScope.launch {
+                    //     Use also when you want to perform some operations on an object and return the object itself.
+                    //    Use let when you want to transform the object, or when you are interested in the result of the lambda expression.
                     noteUseCases.getNote(noteIdSaved)?.also { note ->
                         currentNoteId = note.id
                         currentNote = note
