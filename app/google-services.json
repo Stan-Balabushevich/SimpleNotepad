@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "604596472542",
+    "project_id": "simple-notepad-4bf9a",
+    "storage_bucket": "simple-notepad-4bf9a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604596472542:android:f0e220e52f2fa06d79504f",
+        "android_client_info": {
+          "package_name": "id.slava.nt.simplenotepad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604596472542-virke967k0bgbjjurb7ajsi9rttlj9j8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPg6fk7YLqy4N_4xqIx1yOLWSVIs_pwcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604596472542-virke967k0bgbjjurb7ajsi9rttlj9j8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

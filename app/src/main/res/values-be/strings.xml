@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Нататнік</string>
+    <string name="save_file_error">Не ўдалося захаваць файл</string>
+    <string name="search">Пошук</string>
+    <string name="back_arrow">Стрэлка назад</string>
+    <string name="notes">Жыве Беларусь!</string>
+    <string name="ftb_desc">Дадаць новую нататку</string>
+    <string name="search_title">Пошук па назве</string>
+    <string name="search_content">Пошук па змесце</string>
+    <string name="show_less">Паказваць менш</string>
+    <string name="show_more">Паказаць больш</string>
+    <string name="sort">Упарадкаваць нататкі</string>
+    <string name="sort_created">Упарадкаваць па стварэнні</string>
+    <string name="sort_edited">Упарадкаваць па адрэдагаваны</string>
+    <string name="created">Cтвораны: %1$s</string>
+    <string name="edited">Адрэдагаваны: %1$s</string>
+    <string name="sort_title">Упарадкаваць па назве</string>
+    <string name="delete_note">Выдаліць нататку</string>
+    <string name="save_note">Захаваць нататку</string>
+    <string name="delete_note_question">Вы хочаце выдаліць нататку?</string>
+    <string name="discard_changes">Адмяніць змены?</string>
+    <string name="saved_success">Нататка паспяхова захавана</string>
+    <string name="save_error">Не ўдалося захаваць нататку</string>
+    <string name="edit_note">Рэдагаваць нататку</string>
+    <string name="default_title">Назва па змаўчанні</string>
+    <string name="enter_title">Увядзіце назву…</string>
+    <string name="enter_content">Увядзіце змесціва…</string>
+    <string name="share_all_notes">Падзяліцца усімі нататкамі</string>
+    <string name="share_all_notes_txt">Падзяліцца усімі нататкамі як тэкставы файл?</string>
+    <string name="yes">Так</string>
+    <string name="cancel">Адмяніць</string>
+</resources>

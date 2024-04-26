@@ -1,3 +1,32 @@
 <resources>
-    <string name="app_name">Simple Notepad</string>
+    <string name="app_name">SNotepad</string>
+    <string name="search">Search</string>
+    <string name="back_arrow">Back arrow</string>
+    <string name="notes">Notes</string>
+    <string name="ftb_desc">Add new note</string>
+    <string name="search_title">Search by Title</string>
+    <string name="search_content">Search by Content</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+    <string name="sort">Order notes</string>
+    <string name="sort_created">Order by created</string>
+    <string name="sort_edited">Order by edited</string>
+    <string name="created">Created: %1$s</string>
+    <string name="edited">Edited: %1$s</string>
+    <string name="sort_title">Order by title</string>
+    <string name="delete_note">Delete note</string>
+    <string name="save_note">Save note</string>
+    <string name="delete_note_question">Do you want to delete note?</string>
+    <string name="discard_changes">Discard changes?</string>
+    <string name="saved_success">Note saved successfully</string>
+    <string name="save_error">Could not save note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="default_title">Default Title</string>
+    <string name="enter_title">Enter title…</string>
+    <string name="enter_content">Enter content…</string>
+    <string name="share_all_notes">Share all notes</string>
+    <string name="share_all_notes_txt">Share all notes as txt file?</string>
+    <string name="save_file_error">Could not save file</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 </resources>
